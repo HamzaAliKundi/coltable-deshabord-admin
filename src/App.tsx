@@ -1,13 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/dashboard";
 import PublicRoutes from "./pages/publicRoutes";
 import ProtectedRoutes from "./pages/protextedRoutes";
 import Layout from "./pages/layout";
 import { Toaster } from "react-hot-toast";
-import AddTask from "./components/tasks/addTask";
-import EditTask from "./components/tasks/editTask";
-import Tasks from "./pages/tasks";
 import Signup from "./pages/auth/signUp";
+import UsersPage from "./pages/users";
 
 function App() {
   return (
@@ -20,13 +17,7 @@ function App() {
 
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<Layout />}>
-            
-            <Route path="dashboard" element={<Dashboard />} />
-
-            <Route path="tasks" element={<Tasks />} />
-            <Route path="task/add" element={<AddTask />} />
-            <Route path="task/edit/:id" element={<EditTask />} />
-            
+            <Route path="users" element={<UsersPage />} />            
           </Route>
         </Route>
       </Routes>

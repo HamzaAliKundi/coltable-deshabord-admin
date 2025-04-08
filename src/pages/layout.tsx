@@ -10,14 +10,14 @@ const Layout = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen bg-black flex-col">
       <Navbar />
 
       <div className="flex flex-1">
         <SideNav isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
         <main
-          className={`flex-1 p-6 bg-gray-50 ${
+          className={`flex-1 p-6 bg-black ${
             isSidebarOpen
               ? "opacity-50 pointer-events-none md:opacity-100 md:pointer-events-auto"
               : ""

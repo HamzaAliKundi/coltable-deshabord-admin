@@ -1,83 +1,164 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { LogOut, User, Settings } from "lucide-react";
-import Button from "../common/button";
-import logo from "/logo.svg";
+import { FiSearch, FiMenu, FiX } from "react-icons/fi";
+import { FaHome, FaUsers, FaMapMarkerAlt, FaCalendarAlt, FaTh } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
-const Navbar = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
-  const handleLogout = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      localStorage.removeItem("token");
-      setIsLoading(false);
-      setIsModalOpen(false);
-      navigate("/");
-    }, 2000);
+  const handleLinkClick = () => {
+    setIsOpen(false);
   };
 
   return (
-    <div className="bg-white shadow-md py-4 px-11 flex items-center justify-between border-b border-gray-300">
-      <div className="flex items-center space-x-4">
-        <Link to="/" className="flex items-center text-gray-700">
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-10 w-auto"
-          />
+    <nav className="bg-black text-white h-[100px] w-full flex items-center z-30 px-8 md:px-20 justify-between relative">
+      {/* Left Logo */}
+      <div className="flex items-center space-x-2">
+        <Link to="/">
+          <img src="/logo.svg" alt="DragSpace Logo" className="h-12" />
         </Link>
       </div>
 
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center mr-4 relative group">
-          <User className="h-5 w-5 text-gray-700 mr-2" />
-          <span className="text-gray-700 font-semibold cursor-pointer">
-            User
-          </span>
-          
-        </div>
-        <span
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center text-gray-700 hover:text-blue-500 cursor-pointer"
-        >
-          <LogOut className="mr-2 h-5 w-5" />
-          <span className="font-semibold">Logout</span>
-        </span>
-      </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div
-            className={`bg-white w-96 mx-4 rounded-lg shadow-lg p-6 text-center transform transition-transform duration-300 ${
-              isModalOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
-            }`}
-          >
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Are you sure you want to logout?
-            </h2>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200"
-              >
-                Cancel
-              </button>
-              <Button
-                onClick={handleLogout}
-                type="button"
-                isLoading={isLoading}
-              >
-                Logout
-              </Button>
-            </div>
+      {/* Middle Navigation - Desktop */}
+      <div className="hidden md:flex items-center w-[616px] h-[66px] p-2 rounded-full shadow-lg backdrop-blur-sm" 
+     style={{
+       background: "linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(24, 24, 24, 0.9) 50%, rgba(255, 255, 255, 0.1) 100%)",
+       boxShadow: "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.2)"
+     }}>
+        <div className="flex items-center space-x-5 px-4 text-sm">
+          <div className="flex flex-col items-center">
+            <Link to="/" className="flex items-center gap-2">
+              <FaHome className="w-4 h-4" /> Home
+            </Link>
+            {location.pathname === "/" && (
+              <div className="w-full h-[3px] bg-[#FF00A2] rounded-[5px] mt-2"></div>
+            )}
+          </div>
+          <div className="flex flex-col items-center">
+            <Link to="/performers" className="flex items-center gap-2">
+              <FaUsers className="w-4 h-4" /> Performers
+            </Link>
+            {location.pathname === "/performers" && (
+              <div className="w-full h-[3px] bg-[#FF00A2] rounded-[5px] mt-2"></div>
+            )}
+          </div>
+          <div className="flex flex-col items-center">
+            <Link to="/venues" className="flex items-center gap-2">
+              <FaMapMarkerAlt className="w-4 h-4" /> Venues
+            </Link>
+            {location.pathname === "/venues" && (
+              <div className="w-full h-[3px] bg-[#FF00A2] rounded-[5px] mt-2"></div>
+            )}
+          </div>
+          <div className="flex flex-col items-center">
+            <Link to="/events" className="flex items-center gap-2">
+              <FaCalendarAlt className="w-4 h-4" /> Events
+            </Link>
+            {location.pathname === "/events" && (
+              <div className="w-full h-[3px] bg-[#FF00A2] rounded-[5px] mt-2"></div>
+            )}
+          </div>
+          <div className="flex flex-col items-center">
+            <Link to="/more" className="flex items-center gap-2">
+              <FaTh className="w-4 h-4" /> More
+            </Link>
+            {location.pathname === "/more" && (
+              <div className="w-full h-[3px] bg-[#FF00A2] rounded-[5px] mt-2"></div>
+            )}
           </div>
         </div>
-      )}
-    </div>
-  );
-};
+        {/* Search Icon */}
+        <div className="ml-auto bg-gradient-to-r from-pink-500 to-purple-500 rounded-full p-4 cursor-pointer">
+          <FiSearch className="text-white w-6 h-6" />
+        </div>
+      </div>
 
-export default Navbar;
+      {/* Right Links */}
+      {/* Right Links */}
+      <div className="hidden md:flex space-x-6">
+        <Link to="#" className="text-sm mt-1">
+          Registration
+        </Link>
+        <Link to="#" className="text-sm flex items-center gap-2">
+          <img
+            src="/login.svg"
+            alt="Login"
+            className="w-[19px] h-[20px] mb-1"
+          />
+          <span>Login</span>
+        </Link>
+      </div>
+
+      {/* Mobile Menu Button */}
+      <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
+        {isOpen ? <FiX className="w-8 h-8" /> : <FiMenu className="w-8 h-8" />}
+      </button>
+
+      {/* Mobile Dropdown Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-[100px] left-0 w-full bg-gray-900 text-white flex flex-col space-y-4 p-5 md:hidden z-50 shadow-lg"
+          >
+            <Link
+              to="/"
+              className="flex items-center gap-2 py-2"
+              onClick={handleLinkClick}
+            >
+              <FaHome /> Home
+            </Link>
+            <Link
+              to="/performers"
+              className="flex items-center gap-2 py-2"
+              onClick={handleLinkClick}
+            >
+              <FaUsers /> Performers
+            </Link>
+            <Link
+              to="/venues"
+              className="flex items-center gap-2 py-2"
+              onClick={handleLinkClick}
+            >
+              <FaMapMarkerAlt /> Venues
+            </Link>
+            <Link
+              to="/events"
+              className="flex items-center gap-2 py-2"
+              onClick={handleLinkClick}
+            >
+              <FaCalendarAlt /> Events
+            </Link>
+            <Link
+              to="/more"
+              className="flex items-center gap-2 py-2"
+              onClick={handleLinkClick}
+            >
+              <FaTh /> More
+            </Link>
+            <Link to="/registration" className="py-2" onClick={handleLinkClick}>
+              Registration
+            </Link>
+            <Link
+              to="/login"
+              className="flex items-center gap-2 py-2"
+              onClick={handleLinkClick}
+            >
+              <img
+                src="/login.svg"
+                alt="Login"
+                className="w-4 h-4"
+              />
+              <span>Login</span>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+}
