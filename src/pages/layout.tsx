@@ -3,6 +3,7 @@ import {  Outlet } from "react-router-dom";
 import Navbar from "./navbar";
 import { Menu, X } from "lucide-react";
 import SideNav from "./sideNav";
+import Footer from "../common/Footer";
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,8 +31,10 @@ const Layout = () => {
             <Menu className="h-5 w-5" />
           </button>
           <Outlet />
+
         </main>
       </div>
+          <Footer />
     </div>
   );
 };

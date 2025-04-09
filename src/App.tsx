@@ -5,6 +5,7 @@ import Layout from "./pages/layout";
 import { Toaster } from "react-hot-toast";
 import Signup from "./pages/auth/signUp";
 import UsersPage from "./pages/users";
+import EventsPage from "./pages/events";
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
 
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<Layout />}>
-            <Route path="users" element={<UsersPage />} />            
+            <Route path="users" element={<UsersPage />} /> 
+            <Route path="events" element={<EventsPage />} />     
           </Route>
         </Route>
       </Routes>
