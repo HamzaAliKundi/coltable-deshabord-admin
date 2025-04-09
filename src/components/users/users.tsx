@@ -61,7 +61,7 @@ const Users = () => {
   return (
     <div className="bg-black p-8">
       {/* Tab Navigation */}
-      <div className="flex gap-8 mb-8 border-b border-gray-800">
+      <div className="flex gap-8 mb-8">
         <button 
           className={`px-6 py-4 font-bold text-base transition-all duration-300 relative ${
             activeTab === 'all' ? 'text-white' : 'text-gray-400'

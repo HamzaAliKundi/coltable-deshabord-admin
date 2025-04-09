@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import LoginModal from './index';
+import { Link } from "react-router-dom";
 
 const Signup = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -259,13 +260,14 @@ const Signup = () => {
 
             {/* Google Login */}
             <div className="flex justify-center mt-6">
-              <button
+              <Link
+              to="/users"
                 type="button"
                 className="flex items-center justify-center gap-2 w-full max-w-lg h-12 rounded-full border border-[#959092] bg-white text-black hover:bg-gray-100 transition-colors px-5 py-3.5 font-['Space_Grotesk']"
               >
                 <span>Login With Google</span>
                 <FcGoogle size={20} />
-              </button>
+              </Link>
             </div>
           </form>
         </div>
