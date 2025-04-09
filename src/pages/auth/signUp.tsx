@@ -237,7 +237,7 @@ const Signup = () => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex justify-center mt-8 gap-4">
+            <div className="flex justify-center mt- gap-4">
               <button
                 type="button"
                 className="w-full md:w-64 h-13 rounded-l-full bg-white text-black py-2.5 px-4 font-['Space_Grotesk']"

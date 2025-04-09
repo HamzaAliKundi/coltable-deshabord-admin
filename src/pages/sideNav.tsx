@@ -22,7 +22,7 @@ const SideNav = ({ isSidebarOpen, toggleSidebar }: SideNavProps) => {
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
       } transition-transform duration-300 md:translate-x-0 md:relative`}
     >
-      <nav className="px-4 pt-9 md:pt-2 lg:pt-4">
+      <nav className="ml-4 md:ml-12 lg:ml-24 pt-28 md:pt-12 lg:pt-20">
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item.name}>
