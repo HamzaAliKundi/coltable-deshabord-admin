@@ -6,6 +6,9 @@ import { Toaster } from "react-hot-toast";
 import Signup from "./pages/auth/signUp";
 import UsersPage from "./pages/users";
 import EventsPage from "./pages/events";
+import SettingsPage from "./pages/settings";
+import ActivitiesPage from "./pages/activities";
+import VenuesPage from "./pages/venues";
 
 function App() {
   return (
@@ -19,7 +22,10 @@ function App() {
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<Layout />}>
             <Route path="users" element={<UsersPage />} /> 
-            <Route path="events" element={<EventsPage />} />     
+            <Route path="events" element={<EventsPage />} />
+            <Route path="venues" element={<VenuesPage />} />  
+            <Route path="settings" element={<SettingsPage />} />  
+            <Route path="activities" element={<ActivitiesPage />} /> 
           </Route>
         </Route>
       </Routes>
