@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
 
 const navItems = [
   { name: "Manage Users", path: "/users" },
@@ -38,6 +37,21 @@ const SideNav = ({ isSidebarOpen, toggleSidebar }: SideNavProps) => {
               </NavLink>
             </li>
           ))}
+          {isSidebarOpen && (
+            <li className="mt-8">
+              <NavLink
+                to="#"
+                className="block px-4 py-2 font-['Space_Grotesk'] text-[16px] leading-[100%] align-middle text-[#888888] flex items-center gap-2"
+              >
+                <img
+                  src="/login.svg"
+                  alt="Logout"
+                  className="w-[19px] h-[20px]"
+                />
+                <span>Logout</span>
+              </NavLink>
+            </li>
+          )}
         </ul>
       </nav>
     </aside>
