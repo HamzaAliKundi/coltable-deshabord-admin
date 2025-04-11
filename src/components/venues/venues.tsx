@@ -63,15 +63,15 @@ const Venues = () => {
             {/* Action buttons */}
             <div className="mt-6  space-y-2 md:space-y-4">
               <div className="flex gap-2 md:gap-3">
-                <button className="w-full md:w-[144px] h-[40px] bg-[#FF00A2] md:h-[56px]  md:border-[3px] border-[#FF00A2]  text-white text-sm md:text-base font-normal rounded-[82px]">
+                <button className="w-1/2 md:w-[144px] h-[40px] bg-[#FF00A2] md:h-[56px]  md:border-[3px] border-[#FF00A2]  text-white text-[10px] md:text-base font-normal rounded-[82px]">
                   VIEW DETAILS
                 </button>
-                <button className="w-[60px] md:w-[90px] h-[40px] bg-[#FF00A2] md:h-[56px] md:border-[3px] border-[#FF00A2]  text-white text-sm md:text-base font-normal rounded-[82px]">
+                <button className="w-1/2 md:w-[90px] h-[40px] bg-[#FF00A2] md:h-[56px] md:border-[3px] border-[#FF00A2]  text-white text-[10px] md:text-base font-normal rounded-[82px]">
                   REJECTS
                 </button>
               </div>
 
-              <button className="w-full md:w-[258px] h-[40px] md:h-[51px] bg-[#FF00A2] text-white text-sm md:text-base font-medium rounded-[30px]">
+              <button className="w-full md:w-[258px] h-[40px] md:h-[51px] bg-[#FF00A2] text-white text-[10px] md:text-base font-medium rounded-[30px]">
                 APPROVED
               </button>
             </div>

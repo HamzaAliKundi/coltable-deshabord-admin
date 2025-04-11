@@ -45,10 +45,10 @@ const Activities = () => {
             <div className='mt-8 md:mt-14 flex flex-col gap-2 md:gap-4'>
               <h3 className='text-white text-base md:text-xl font-bold ml-4 md:ml-6'>{profile.name}</h3>
               <div className='flex flex-col gap-2 items-center'>
-                <button className='w-full md:w-[250px] h-[40px] md:h-[51px] bg-[#FF00A2] text-white text-sm md:text-base font-medium rounded-[30px]'>
+                <button className='w-full md:w-[250px] h-[40px] md:h-[51px] bg-[#FF00A2] text-white text-[10px] md:text-base font-medium rounded-[30px]'>
                   APPROVE PROFILE
                 </button>
-                <button className='w-full md:w-[250px] h-[40px] md:h-[51px] border border-white/20 text-white text-sm md:text-base font-medium rounded-[30px]'>
+                <button className='w-full md:w-[250px] h-[40px] md:h-[51px] border border-white/20 text-white text-[10px] md:text-base font-medium rounded-[30px]'>
                   SUSPEND PROFILE
                 </button>
               </div>

@@ -38,7 +38,7 @@ const Users = () => {
       name: "Adriana LaRue",
       mainImage: "/users/singer.svg",
       logoImage: "/users/crown.svg",
-      status: "suspended"
+      status: "rejected"
     },
     {
       id: 6,
@@ -56,7 +56,7 @@ const Users = () => {
     }
   ];
 
-  const filteredUsers = activeTab === 'all' ? users : users.filter(user => user.status === 'suspended');
+  const filteredUsers = activeTab === 'all' ? users : users.filter(user => user.status === 'rejected');
 
   return (
     <div className="bg-black p-4 sm:p-8">
@@ -75,12 +75,12 @@ const Users = () => {
         </button>
         <button
           className={`px-3 sm:px-6 py-2 sm:py-4 font-bold text-sm sm:text-base transition-all duration-300 relative ${
-            activeTab === 'suspended' ? 'text-white' : 'text-gray-400'
+            activeTab === 'rejected' ? 'text-white' : 'text-gray-400'
           }`}
-          onClick={() => setActiveTab('suspended')}
+          onClick={() => setActiveTab('rejected')}
         >
-          Suspended Accounts
-          {activeTab === 'suspended' && (
+          Rejected Accounts
+          {activeTab === 'rejected' && (
             <div className="absolute bottom-0 left-0 w-full h-1 bg-[#FF00A2]"></div>
           )}
         </button>
@@ -89,7 +89,7 @@ const Users = () => {
       {/* User Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 md:gap-8">
         {filteredUsers.map((user) => (
-          <div key={user.id} className="w-full max-w-[350px] mx-auto h-[350px] sm:h-[500px] relative">
+          <div key={user.id} className="w-full max-w-[350px] mx-auto h-[300px] sm:h-[500px] relative">
             {/* Main Image */}
             <div className="relative">
               <img
@@ -108,38 +108,36 @@ const Users = () => {
               </div>
             </div>
 
-            <div className="bg-[] text-black rounded-b-[8px] px-4 sm:px-6 pb-4 sm:pb-6 mt-[-8px] h-[200px] sm:h-[250px] flex flex-col">
-              <div className="flex-grow">
-                <h3 className="font-['Space_Grotesk'] text-white font-bold text-lg sm:text-2xl mt-8 sm:mt-16 mb-2 sm:mb-4">
-                  {user.name}
-                </h3>
-              </div>
+            <div className="bg-[] text-black rounded-b-[8px] px-4 sm:px-6 pb-4 sm:pb-6 mt-[-8px] flex flex-col justify-between h-[140px] sm:h-[250px]">
+              <h3 className="font-['Space_Grotesk'] text-white font-bold text-lg sm:text-2xl mt-8 sm:mt-16">
+                {user.name}
+              </h3>
 
               {/* Action Buttons */}
               <div className="space-y-2 sm:space-y-4">
                 {user.status === 'pending' ? (
                   <>
                     <div className="flex gap-2 sm:gap-4">
-                      <button className="w-1/2 h-8 sm:h-12 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[10px] sm:text-base uppercase">
+                      <button className="w-1/2 h-6 sm:h-10 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[8px] sm:text-sm uppercase">
                         View Profile
                       </button>
-                      <button className="w-1/2 h-8 sm:h-12 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[10px] sm:text-base uppercase">
-                        Edit
+                      <button className="w-1/2 h-6 sm:h-10 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[8px] sm:text-sm uppercase">
+                        Edit Profile
                       </button>
                     </div>
-                    <button className="w-full h-8 sm:h-12 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[10px] sm:text-base uppercase">
-                      Delete User Accounts
+                    <button className="w-full h-6 sm:h-10 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[8px] sm:text-sm uppercase">
+                      Other Options
                     </button>
                   </>
                 ) : (
                   <>
                     <div className="flex items-center mb-2">
-                      <button className="w-full h-8 sm:h-12 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[10px] sm:text-base uppercase">
+                      <button className="w-full h-6 sm:h-10 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[8px] sm:text-sm uppercase">
                         Approve Profile
                       </button>
                     </div>
-                    <button className="w-full h-8 sm:h-12 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[10px] sm:text-base uppercase">
-                      Suspend Profiles
+                    <button className="w-full h-6 sm:h-10 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[8px] sm:text-sm uppercase">
+                        Reject Profile
                     </button>
                   </>
                 )}
