@@ -12,7 +12,7 @@ export default function Navbar({ isSidebarOpen, toggleSidebar }: NavbarProps) {
     <nav className="bg-black py-2 text-white h-[100px] w-full flex items-center z-30 px-8 md:px-20 justify-between relative">
       {/* Left Logo */}
       <div className="flex items-center space-x-2">
-        <Link to="/">
+        <Link to="/users">
           <img src="/logo.svg" alt="DragSpace Logo" className="h-12" />
         </Link>
       </div>
