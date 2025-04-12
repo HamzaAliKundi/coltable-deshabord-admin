@@ -240,14 +240,14 @@ const Signup = () => {
             <div className="flex justify-center mt-5 gap-4">
               <button
                 type="button"
-                className="w-full md:w-64 h-13 rounded-l-full bg-white text-black py-2.5 px-4 font-['Space_Grotesk']"
+                className="w-full md:w-64 h-13 rounded-l-full bg-white text-[#FF00A2] py-2.5 px-4 font-['Space_Grotesk']"
                 onClick={() => setIsLoginModalOpen(true)}
               >
                 Login
               </button>
               <button
                 type="submit"
-                className="w-full md:w-64 h-13 rounded-r-full bg-pink-500 text-white py-2.5 px-4 font-['Space_Grotesk']"
+                className="w-full md:w-64 h-13 rounded-r-full bg-[#FF00A2] text-white py-2.5 px-4 font-['Space_Grotesk']"
                 style={{ backgroundColor: "#FF00A2" }}
               >
                 Sign Up
