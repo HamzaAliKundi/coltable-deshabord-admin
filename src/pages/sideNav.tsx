@@ -5,7 +5,6 @@ const navItems = [
   { name: "Manage Events", path: "/events" },
   { name: "Manage Venues", path: "/venues" },
   { name: "Pending Activities", path: "/activities" },
-  { name: "Reports", path: "/reports" },
   { name: "Settings", path: "/settings" }
 ];
 
