@@ -9,7 +9,8 @@ import EventsPage from "./pages/events";
 import SettingsPage from "./pages/settings";
 import ActivitiesPage from "./pages/activities";
 import VenuesPage from "./pages/venues";
-
+import Privacy from './components/privacy';
+import Terms from './components/terms';
 function App() {
   return (
     <BrowserRouter>
@@ -26,6 +27,8 @@ function App() {
             <Route path="venues" element={<VenuesPage />} />  
             <Route path="settings" element={<SettingsPage />} />  
             <Route path="activities" element={<ActivitiesPage />} /> 
+            <Route path="privacy" element={<Privacy />} />
+            <Route path="terms" element={<Terms />} />
           </Route>
         </Route>
       </Routes>
