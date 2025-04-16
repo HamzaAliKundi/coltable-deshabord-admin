@@ -11,6 +11,7 @@ import ActivitiesPage from "./pages/activities";
 import VenuesPage from "./pages/venues";
 import Privacy from './components/privacy';
 import Terms from './components/terms';
+import Media from "./components/media/media";
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +30,7 @@ function App() {
             <Route path="activities" element={<ActivitiesPage />} /> 
             <Route path="privacy" element={<Privacy />} />
             <Route path="terms" element={<Terms />} />
+            <Route path="media" element={<Media />} />
           </Route>
         </Route>
       </Routes>

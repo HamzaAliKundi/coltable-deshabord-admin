@@ -1,85 +1,62 @@
-import React, { useState } from 'react'
+import { useState } from "react";
+import Pagination from "../../common/Pagination";
 
 const Venues = () => {
-  const [activeTab, setActiveTab] = useState("listing");
+    const venues = [
+        { id: 1, name: "Grand Ballroom", location: "Downtown Hotel", capacity: "500", status: "pending", image: "/events/event.svg" },
+        { id: 2, name: "Rooftop Garden", location: "City Center", capacity: "200", status: "approved", image: "/events/event.svg" },
+        { id: 3, name: "Convention Hall", location: "Business District", capacity: "1000", status: "rejected", image: "/events/event.svg" },
+        { id: 4, name: "Beach Club", location: "Coastal Area", capacity: "300", status: "pending", image: "/events/event.svg" },
+    ];
 
-  return (
-    <div className="bg-black p-4 md:p-8 w-full mb-32">
-      {/* Tab Navigation */}
-      <div className="flex gap-4 md:gap-8 mb-6 md:mb-8 overflow-x-auto">
-        <button
-          className={`px-3 md:px-6 py-2 md:py-4 font-bold text-sm md:text-base transition-all duration-300 relative whitespace-nowrap ${
-            activeTab === "listing" ? "text-white" : "text-gray-400"
-          }`}
-          onClick={() => setActiveTab("listing")}
-        >
-          Event Listing
-          {activeTab === "listing" && (
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-pink-500"></div>
-          )}
-        </button>
-        <button
-          className={`px-3 md:px-6 py-2 md:py-4 font-bold text-sm md:text-base transition-all duration-300 relative whitespace-nowrap ${
-            activeTab === "create" ? "text-white" : "text-gray-400"
-          }`}
-          onClick={() => setActiveTab("create")}
-        >
-          Create an Event
-          {activeTab === "create" && (
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-pink-500"></div>
-          )}
-        </button>
-      </div>
-      <h1 className="font-['Space_Grotesk'] font-normal text-[32px] leading-none text-white capitalize">Event Listing</h1>
-           {/* Event Card */}
-        <div className="bg-[#212121] mt-7 rounded-[8px] overflow-hidden w-full max-w-[600px] flex flex-col md:flex-row">
-          {/* Left side - Image with date badge */}
-          <div className="p-2 md:p-4">
-            <img 
-              src="/events/event.svg" 
-              alt="Festival crowd" 
-              className="w-full h-[250px] md:w-[275px] md:h-[250px] lg:w-[275] lg:h-[300px] rounded-[8px] object-cover"
-            />
-          </div>
-          
-          {/* Right side - Event details */}
-          <div className="flex-1 p-3 md:p-3 flex flex-col">
-            {/* Event title */}
-            <h2 className="text-white font-['Space_Grotesk'] font-bold text-lg md:text-2xl capitalize mb-4 md:mb-0">
-              Barcelona Food Truck Festival 2018
-            </h2>
-
-            <div className="flex flex-col gap-2 mt-2 md:mt-6 lg:mt-8">
-              <div className="flex items-center gap-2">
-                <img src="/venues/time.svg" alt="Time" className="w-5 h-5" />
-                <p className="font-['Space_Grotesk'] font-normal text-base leading-none text-white">Start 20:00pm - 22:00pm</p>
-              </div>
-              <div className="flex items-center gap-2 mt-4">
-                <img src="/venues/location.svg" alt="Location" className="w-5 h-5" />
-                <p className="font-['Space_Grotesk'] font-normal text-base leading-none text-white">Manhattan, New York</p>
-              </div>
-            </div>
-            
-            {/* Action buttons */}
-            <div className="mt-6  space-y-2 md:space-y-4">
-              <div className="flex gap-2 md:gap-3">
-                <button className="w-1/2 md:w-[144px] h-[40px] bg-[#FF00A2] md:h-[56px]  md:border-[3px] border-[#FF00A2]  text-white text-[10px] md:text-base font-normal rounded-[82px]">
-                  VIEW DETAILS
-                </button>
-                <button className="w-1/2 md:w-[90px] h-[40px] bg-[#FF00A2] md:h-[56px] md:border-[3px] border-[#FF00A2]  text-white text-[10px] md:text-base font-normal rounded-[82px]">
-                  REJECTS
-                </button>
-              </div>
-
-              <button className="w-full md:w-[258px] h-[40px] md:h-[51px] bg-[#FF00A2] text-white text-[10px] md:text-base font-medium rounded-[30px]">
-                APPROVED
-              </button>
+    const getStatusColor = (status: string) => {
+        if (status === 'approved') return 'text-green-500';
+        if (status === 'rejected') return 'text-red-500';
+        return 'text-yellow-500';
+    };
+  
+    return (
+      <div className="bg-black p-4 md:p-8 w-full mb-32">
+        <div className="flex justify-between items-center mb-6 md:mb-8">
+          <h1 className="text-white text-xl md:text-2xl font-bold">Venues</h1>
+          <div className="relative">
+            <select className="w-[121px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 appearance-none outline-none text-sm">
+              <option value="">Filter by</option>
+              <option value="name">Name</option>
+              <option value="status">Status</option>
+            </select>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
           </div>
         </div>
-        
-    </div>
-  );
+
+        <div className="space-y-4">
+          {venues.map((venue) => (
+            <div key={venue.id} className="bg-[#212121] rounded-[8px] p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <img src={venue.image} alt={venue.name} className="w-full sm:w-20 h-20 rounded-[8px] object-cover"/>
+              <div className="flex-1 w-full sm:w-auto">
+                <h2 className="text-white font-['Space_Grotesk'] font-bold text-base sm:text-lg capitalize">{venue.name}</h2>
+                <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
+                  <p>Location: {venue.location}</p>
+                  <p>Capacity: {venue.capacity}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <button className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 bg-[#FF00A2] text-white text-xs sm:text-sm font-medium rounded-[30px]">View Detail</button>
+                <button className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 border-2 border-gray-600 text-white text-xs sm:text-sm font-medium rounded-[30px]">Approve</button>
+                <button className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 border-2 border-gray-600 text-white text-xs sm:text-sm font-medium rounded-[30px]">Reject</button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-12">
+          <Pagination />
+        </div>
+      </div>
+    )
 }
 
 export default Venues
