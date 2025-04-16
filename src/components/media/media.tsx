@@ -5,7 +5,7 @@ const Media = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleImageClick = (index) => {
+  const handleImageClick = (index: any) => {
     setIsModalOpen(true);
     setSelectedImage(index);
   };

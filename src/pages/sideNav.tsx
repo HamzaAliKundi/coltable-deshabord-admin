@@ -6,7 +6,11 @@ const navItems = [
   { name: "Manage Venues", path: "/venues" },
   // { name: "Pending Activities", path: "/activities" },
   { name: "Media", path: "/media" },
+  { name: "Reviews", path: "/reviews" },
+  { name: "Banner", path: "/banner" },
+  { name: "Advertisment", path: "/ad" },
   { name: "Settings", path: "/settings" },
+
 ];
 
 interface SideNavProps {
