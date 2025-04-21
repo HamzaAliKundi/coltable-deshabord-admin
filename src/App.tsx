@@ -26,7 +26,7 @@ function App() {
 
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<Layout />}>
-            <Route path="users" element={<UsersPage />} /> 
+            <Route path="performers" element={<UsersPage />} /> 
             <Route path="events" element={<EventsPage />} />
             <Route path="venues" element={<VenuesPage />} />  
             <Route path="settings" element={<SettingsPage />} />  
