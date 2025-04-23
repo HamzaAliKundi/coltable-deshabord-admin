@@ -4,7 +4,6 @@ import ProtectedRoutes from "./pages/protextedRoutes";
 import Layout from "./pages/layout";
 import { Toaster } from "react-hot-toast";
 import Signup from "./pages/auth/signUp";
-import UsersPage from "./pages/users";
 import EventsPage from "./pages/events";
 import SettingsPage from "./pages/settings";
 import ActivitiesPage from "./pages/activities";
@@ -15,6 +14,7 @@ import Media from "./components/media/media";
 import BannerPage from "./pages/Banner";
 import AdPage from "./pages/ad";
 import ReviewsPage from "./pages/reviews";
+import PerformerPage from "./pages/performers";
 function App() {
   return (
     <BrowserRouter>
@@ -26,7 +26,7 @@ function App() {
 
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<Layout />}>
-            <Route path="performers" element={<UsersPage />} /> 
+            <Route path="performers" element={<PerformerPage />} /> 
             <Route path="events" element={<EventsPage />} />
             <Route path="venues" element={<VenuesPage />} />  
             <Route path="settings" element={<SettingsPage />} />  
