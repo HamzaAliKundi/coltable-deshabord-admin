@@ -8,13 +8,12 @@ import EventsPage from "./pages/events";
 import SettingsPage from "./pages/settings";
 import ActivitiesPage from "./pages/activities";
 import VenuesPage from "./pages/venues";
-import Privacy from './components/privacy';
-import Terms from './components/terms';
 import Media from "./components/media/media";
 import BannerPage from "./pages/Banner";
-import AdPage from "./pages/ad";
 import ReviewsPage from "./pages/reviews";
 import PerformerPage from "./pages/performers";
+import Privacy from "./components/privacy";
+import Terms from "./components/terms";
 function App() {
   return (
     <BrowserRouter>
@@ -35,7 +34,6 @@ function App() {
             <Route path="terms" element={<Terms />} />
             <Route path="media" element={<Media />} />
             <Route path="banner" element={<BannerPage />} />
-            <Route path="/ad" element={<AdPage />} />
             <Route path="/reviews" element={<ReviewsPage />} />
           </Route>
         </Route>

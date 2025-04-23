@@ -7,8 +7,7 @@ const navItems = [
   // { name: "Pending Activities", path: "/activities" },
   { name: "Media", path: "/media" },
   { name: "Reviews", path: "/reviews" },
-  { name: "Banner", path: "/banner" },
-  { name: "Advertisment", path: "/ad" },
+  { name: "Banner / Advertisements", path: "/banner" },
   { name: "Settings", path: "/settings" },
 
 ];
