@@ -10,11 +10,22 @@ interface PerformerProps {
   totalPages: number;
   isPageLoading: boolean;
   onPageChange: (page: number) => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
   refetch: () => void;
 }
 
-const Performer = ({ perFormerData, isLoading, currentPage, totalPages, isPageLoading, onPageChange, refetch }: PerformerProps) => {
-  const [activeTab, setActiveTab] = useState('all');
+const Performer = ({ 
+  perFormerData, 
+  isLoading, 
+  currentPage,
+  totalPages,
+  isPageLoading,
+  onPageChange,
+  activeTab,
+  onTabChange,
+  refetch 
+}: PerformerProps) => {
   const [updateStatus] = useUpdatePerformerStatusMutation();
   const [deletePerformer] = useDeletePerformerMutation();
   const [loadingApprove, setLoadingApprove] = useState('');
@@ -24,6 +35,11 @@ const Performer = ({ perFormerData, isLoading, currentPage, totalPages, isPageLo
   const filteredUsers = activeTab === 'all' 
     ? perFormerData 
     : perFormerData?.filter((user: any) => user.status === 'rejected');
+
+  // Calculate filtered total pages
+  const filteredTotalPages = activeTab === 'all' 
+    ? totalPages 
+    : Math.ceil((filteredUsers?.length || 0) / 10);
 
   const handleApprove = async (id: string) => {
     if (loadingApprove) return;
@@ -72,7 +88,7 @@ const Performer = ({ perFormerData, isLoading, currentPage, totalPages, isPageLo
             className={`px-3 sm:px-6 py-2 sm:py-4 font-bold text-[8px] sm:text-[10px] md:text-[12px] lg:text-sm transition-all duration-300 relative ${
               activeTab === "all" ? "text-white" : "text-gray-400"
             }`}
-            onClick={() => setActiveTab("all")}
+            onClick={() => onTabChange("all")}
           >
             All Accounts
             {activeTab === "all" && (
@@ -83,7 +99,7 @@ const Performer = ({ perFormerData, isLoading, currentPage, totalPages, isPageLo
             className={`px-3 sm:px-6 py-2 sm:py-4 font-bold text-[8px] sm:text-[10px] md:text-[12px] lg:text-sm transition-all duration-300 relative ${
               activeTab === "rejected" ? "text-white" : "text-gray-400"
             }`}
-            onClick={() => setActiveTab("rejected")}
+            onClick={() => onTabChange("rejected")}
           >
             Rejected Accounts
             {activeTab === "rejected" && (
@@ -219,12 +235,14 @@ const Performer = ({ perFormerData, isLoading, currentPage, totalPages, isPageLo
         )}
       </div>
       <div className="mt-8">
-        <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          isLoading={isPageLoading}
-          onPageChange={onPageChange}
-        />
+        {filteredUsers?.length > 0 && (
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={filteredTotalPages}
+            isLoading={isPageLoading}
+            onPageChange={onPageChange}
+          />
+        )}
       </div>
     </div>
   );

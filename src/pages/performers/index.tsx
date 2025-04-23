@@ -3,6 +3,7 @@ import { useGetAllPerformersQuery } from '../../apis/performer';
 import Performer from '../../components/performer/perofrmer';
 
 const PerformerPage = () => {
+  const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [perFormerData, setPerFormerData] = useState([]);
   
@@ -15,6 +16,12 @@ const PerformerPage = () => {
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
+  // Reset page to 1 when tab changes
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
   return (
     <div>
       <Performer 
@@ -24,6 +31,8 @@ const PerformerPage = () => {
         totalPages={data?.totalPages || 1}
         isPageLoading={isFetching}
         onPageChange={handlePageChange}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
         refetch={refetch}
       />
     </div>
