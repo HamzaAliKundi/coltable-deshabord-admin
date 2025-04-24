@@ -5,30 +5,40 @@ import Performer from '../../components/performer/perofrmer';
 const PerformerPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [perFormerData, setPerFormerData] = useState([]);
+  const ITEMS_PER_PAGE = 8;
   
   const { data, isLoading, isFetching, refetch } = useGetAllPerformersQuery({
-    page: currentPage,
-    limit: 8
+    page: activeTab === 'all' ? currentPage : 1,
+    limit: activeTab === 'all' ? ITEMS_PER_PAGE : 100
   });
 
-  useEffect(() => setPerFormerData(data?.docs || []), [data]);
+  const rejectedPerformers = data?.docs?.filter((user: any) => user.status === 'rejected') || [];
+  
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  
+  const displayData = activeTab === 'all' 
+    ? data?.docs || []
+    : rejectedPerformers.slice(startIndex, endIndex);
 
-  const handlePageChange = (page: number) => setCurrentPage(page);
+  const totalPages = activeTab === 'all'
+    ? data?.totalPages || 1
+    : Math.ceil(rejectedPerformers.length / ITEMS_PER_PAGE);
 
-  // Reset page to 1 when tab changes
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
   };
 
+  const handlePageChange = (page: number) => setCurrentPage(page);
+
   return (
     <div>
       <Performer 
-        perFormerData={perFormerData} 
+        perFormerData={displayData}
         isLoading={isLoading} 
         currentPage={currentPage}
-        totalPages={data?.totalPages || 1}
+        totalPages={totalPages}
         isPageLoading={isFetching}
         onPageChange={handlePageChange}
         activeTab={activeTab}

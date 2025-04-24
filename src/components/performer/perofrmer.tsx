@@ -32,15 +32,6 @@ const Performer = ({
   const [loadingReject, setLoadingReject] = useState('');
   const [loadingDelete, setLoadingDelete] = useState('');
 
-  const filteredUsers = activeTab === 'all' 
-    ? perFormerData 
-    : perFormerData?.filter((user: any) => user.status === 'rejected');
-
-  // Calculate filtered total pages
-  const filteredTotalPages = activeTab === 'all' 
-    ? totalPages 
-    : Math.ceil((filteredUsers?.length || 0) / 10);
-
   const handleApprove = async (id: string) => {
     if (loadingApprove) return;
     try {
@@ -127,7 +118,7 @@ const Performer = ({
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF00A2]"></div>
           </div>
         ) : (
-          filteredUsers?.map((user: any) => (
+          perFormerData?.map((user: any) => (
             <div
               key={user._id}
               className="w-[calc(100%-8px)] max-w-[250px] h-[250px] sm:h-[300px] relative"
@@ -235,10 +226,10 @@ const Performer = ({
         )}
       </div>
       <div className="mt-8">
-        {filteredUsers?.length > 0 && (
+        {perFormerData?.length > 0 && (
           <Pagination 
             currentPage={currentPage}
-            totalPages={filteredTotalPages}
+            totalPages={totalPages}
             isLoading={isPageLoading}
             onPageChange={onPageChange}
           />
