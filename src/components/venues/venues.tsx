@@ -93,7 +93,7 @@ const Venues = ({
           venuesData?.map((venue: any) => (
             <div key={venue._id} className="bg-[#212121] rounded-[8px] p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <img 
-                src={venue.images?.[0] || "/events/event.svg"} 
+                src={venue?.logo || "/events/event.svg"} 
                 alt={venue.name} 
                 className="w-full sm:w-20 h-20 rounded-[8px] object-cover"
               />
