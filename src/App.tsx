@@ -8,12 +8,14 @@ import EventsPage from "./pages/events";
 import SettingsPage from "./pages/settings";
 import ActivitiesPage from "./pages/activities";
 import VenuesPage from "./pages/venues";
+import VenueDetailPage from "./pages/venues/detail";
 import Media from "./components/media/media";
 import BannerPage from "./pages/Banner";
 import ReviewsPage from "./pages/reviews";
 import PerformerPage from "./pages/performers";
 import Privacy from "./components/privacy";
 import Terms from "./components/terms";
+
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +30,7 @@ function App() {
             <Route path="performers" element={<PerformerPage />} /> 
             <Route path="events" element={<EventsPage />} />
             <Route path="venues" element={<VenuesPage />} />  
+            <Route path="venues/:id" element={<VenueDetailPage />} />
             <Route path="settings" element={<SettingsPage />} />  
             <Route path="activities" element={<ActivitiesPage />} /> 
             <Route path="privacy" element={<Privacy />} />

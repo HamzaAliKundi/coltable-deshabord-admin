@@ -18,15 +18,18 @@ export const venueApi = createApi({
         return url;
       },
       transformResponse: (response: any) => {
-        console.log('Raw API Response:', response);
-        // Check if response has docs or data property
         const venues = response?.docs || response?.data || [];
         const totalPages = response?.totalPages || 0;
-        console.log('Transformed Response:', { venues, totalPages });
         return {
           data: venues,
           totalPages
         };
+      }
+    }),
+    getVenueById: builder.query({
+      query: (id) => `/api/admin/venue/get-single-venue/${id}`,
+      transformResponse: (response: any) => {
+        return response || null;
       }
     }),
     updateVenueStatus: builder.mutation({
@@ -47,6 +50,7 @@ export const venueApi = createApi({
 
 export const { 
   useGetAllVenuesQuery,
+  useGetVenueByIdQuery,
   useUpdateVenueStatusMutation,
   useDeleteVenueMutation
 } = venueApi;

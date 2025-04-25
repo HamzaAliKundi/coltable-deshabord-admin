@@ -66,7 +66,6 @@ const Performer = ({
       await updateStatus({ id, status: 'approved' }).unwrap();
       await refetch();
     } catch (error) {
-      console.error('Failed to approve:', error);
     } finally {
       setLoadingApprove('');
     }
@@ -79,7 +78,6 @@ const Performer = ({
       await updateStatus({ id, status: 'rejected' }).unwrap();
       await refetch();
     } catch (error) {
-      console.error('Failed to reject:', error);
     } finally {
       setLoadingReject('');
     }
@@ -92,7 +90,6 @@ const Performer = ({
       await deletePerformer(id).unwrap();
       await refetch();
     } catch (error) {
-      console.error('Failed to delete:', error);
     } finally {
       setLoadingDelete('');
     }

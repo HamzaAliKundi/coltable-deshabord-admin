@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import Pagination from '../../common/Pagination';
 import { useGetAllVenuesQuery, useUpdateVenueStatusMutation, useDeleteVenueMutation } from '../../apis/venues';
+import { useNavigate } from 'react-router-dom';
 
 interface VenuesProps {
   venuesData: any[];
@@ -32,11 +33,7 @@ const Venues = ({
   const [loadingDelete, setLoadingDelete] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
-
-  console.log('Venues Component Raw Data:', venuesData);
-  console.log('Venues Component Data Length:', venuesData?.length);
-  console.log('Venues Component Loading:', isLoading);
-  console.log('Venues Component Filter Loading:', isFilterLoading);
+  const navigate = useNavigate();
 
   const handleFilterChange = async (value: string) => {
     setIsFilterLoading(true);
@@ -61,7 +58,6 @@ const Venues = ({
       await updateStatus({ id, status: 'approved' }).unwrap();
       await refetch();
     } catch (error) {
-      console.error('Failed to approve:', error);
     } finally {
       setLoadingApprove('');
     }
@@ -74,7 +70,6 @@ const Venues = ({
       await updateStatus({ id, status: 'rejected' }).unwrap();
       await refetch();
     } catch (error) {
-      console.error('Failed to reject:', error);
     } finally {
       setLoadingReject('');
     }
@@ -87,7 +82,6 @@ const Venues = ({
       await deleteVenue(id).unwrap();
       await refetch();
     } catch (error) {
-      console.error('Failed to delete:', error);
     } finally {
       setLoadingDelete('');
     }
@@ -170,6 +164,12 @@ const Venues = ({
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <button 
+                  className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 border-2 border-gray-600 text-white text-xs sm:text-sm font-medium rounded-[30px]"
+                  onClick={() => navigate(`/venues/${venue._id}`)}
+                >
+                  View Details
+                </button>
                 {venue.status !== 'approved' && (
                   <button 
                     className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 bg-[#FF00A2] text-white text-xs sm:text-sm font-medium rounded-[30px]"

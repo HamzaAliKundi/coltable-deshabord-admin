@@ -15,10 +15,6 @@ const VenuesPage = () => {
     status: selectedFilter === 'all' ? undefined : selectedFilter
   });
 
-  console.log('Venues Page Raw Data:', data);
-  console.log('Venues Page Loading:', isLoading);
-  console.log('Venues Page Fetching:', isFetching);
-
   const handlePageChange = (newPage: number) => {
     setSearchParams({ page: newPage.toString() });
   };
