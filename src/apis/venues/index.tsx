@@ -12,7 +12,22 @@ export const venueApi = createApi({
   }),
   endpoints: (builder) => ({
     getAllVenues: builder.query({
-      query: ({page = 1, limit = 10}) => `/api/admin/venue/get-all-venues?limit=${limit}&page=${page}&sort=-1`
+      query: ({page = 1, limit = 10, status}) => {
+        let url = `/api/admin/venue/get-all-venues?limit=${limit}&page=${page}&sort=-1`;
+        if (status) url += `&status=${status}`;
+        return url;
+      },
+      transformResponse: (response: any) => {
+        console.log('Raw API Response:', response);
+        // Check if response has docs or data property
+        const venues = response?.docs || response?.data || [];
+        const totalPages = response?.totalPages || 0;
+        console.log('Transformed Response:', { venues, totalPages });
+        return {
+          data: venues,
+          totalPages
+        };
+      }
     }),
     updateVenueStatus: builder.mutation({
       query: ({ id, status }) => ({

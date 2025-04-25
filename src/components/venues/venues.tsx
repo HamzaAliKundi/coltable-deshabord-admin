@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Pagination from '../../common/Pagination';
 import { useGetAllVenuesQuery, useUpdateVenueStatusMutation, useDeleteVenueMutation } from '../../apis/venues';
 
@@ -10,6 +10,8 @@ interface VenuesProps {
   isPageLoading: boolean;
   onPageChange: (page: number) => void;
   refetch: () => void;
+  selectedFilter: string;
+  onFilterChange: (filter: string) => void;
 }
 
 const Venues = ({ 
@@ -19,13 +21,38 @@ const Venues = ({
   totalPages,
   isPageLoading,
   onPageChange,
-  refetch 
+  refetch,
+  selectedFilter,
+  onFilterChange
 }: VenuesProps) => {
   const [updateStatus] = useUpdateVenueStatusMutation();
   const [deleteVenue] = useDeleteVenueMutation();
   const [loadingApprove, setLoadingApprove] = useState('');
   const [loadingReject, setLoadingReject] = useState('');
   const [loadingDelete, setLoadingDelete] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isFilterLoading, setIsFilterLoading] = useState(false);
+
+  console.log('Venues Component Raw Data:', venuesData);
+  console.log('Venues Component Data Length:', venuesData?.length);
+  console.log('Venues Component Loading:', isLoading);
+  console.log('Venues Component Filter Loading:', isFilterLoading);
+
+  const handleFilterChange = async (value: string) => {
+    setIsFilterLoading(true);
+    try {
+      await onFilterChange(value);
+    } finally {
+      setIsFilterLoading(false);
+    }
+  };
+
+  const selectedLabel = useMemo(() => {
+    if (selectedFilter === 'all') return 'All Status';
+    if (selectedFilter === 'approved') return 'Approved Venues';
+    if (selectedFilter === 'rejected') return 'Rejected Venues';
+    return 'All Status';
+  }, [selectedFilter]);
 
   const handleApprove = async (id: string) => {
     if (loadingApprove) return;
@@ -71,21 +98,50 @@ const Venues = ({
       <div className="flex justify-between items-center mb-6 md:mb-8">
         <h1 className="text-white text-xl md:text-2xl font-bold">Venues</h1>
         <div className="relative">
-          <select className="w-[121px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 appearance-none outline-none text-sm">
-            <option value="">Filter by</option>
-            <option value="name">Name</option>
-            <option value="status">Status</option>
-          </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <div 
+            className="w-[200px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 cursor-pointer flex items-center"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <span className="text-sm truncate flex-1">{selectedLabel}</span>
+            {isFilterLoading ? (
+              <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent"></div>
+            ) : (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            )}
           </div>
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-1 w-[200px] bg-[#212121] rounded-[8px] border border-[#FF00A2] z-10">
+              <div className="max-h-[200px] overflow-y-auto">
+                {[
+                  { value: 'all', label: 'All Status' },
+                  { value: 'approved', label: 'Approved Venues' },
+                  { value: 'rejected', label: 'Rejected Venues' }
+                ].map((option) => (
+                  <div
+                    key={option.value}
+                    className={`px-3 py-2 text-sm cursor-pointer hover:bg-[#FF00A2]/10 ${
+                      selectedFilter === option.value ? 'bg-[#FF00A2]/20' : ''
+                    }`}
+                    onClick={() => {
+                      handleFilterChange(option.value);
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="space-y-4">
-        {isLoading ? (
+        {isLoading || isFilterLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF00A2]"></div>
           </div>
