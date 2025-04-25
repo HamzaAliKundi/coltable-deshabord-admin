@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Pagination from '../../common/Pagination';
 import { useUpdatePerformerStatusMutation, useDeletePerformerMutation } from '../../apis/performer';
 
@@ -39,6 +39,7 @@ const Performer = ({
   const [loadingDelete, setLoadingDelete] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const filteredOptions = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -177,7 +178,8 @@ const Performer = ({
           perFormerData?.map((user: any) => (
             <div
               key={user._id}
-              className="w-[calc(100%-8px)] max-w-[250px] h-[250px] sm:h-[300px] relative"
+              className="w-[calc(100%-8px)] max-w-[250px] cursor-pointer h-[250px] sm:h-[300px] relative"
+              onClick={() => navigate(`/performers/${user._id}`)}
             >
               <div className="relative">
                 <img
@@ -212,8 +214,11 @@ const Performer = ({
                         </button>
                       ) : (
                         <button 
-                          className="w-full h-5 sm:h-7 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase"
-                          onClick={() => handleApprove(user._id)}
+                          className="w-full cursor-pointer h-5 sm:h-7 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleApprove(user._id);
+                          }}
                           disabled={loadingApprove === user._id}
                         >
                           {loadingApprove === user._id ? (
@@ -224,7 +229,10 @@ const Performer = ({
                       <div className="flex gap-1 sm:gap-2">
                         <button 
                           className="w-1/2 h-5 sm:h-7 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase"
-                          onClick={() => handleDelete(user._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(user._id);
+                          }}
                           disabled={loadingDelete === user._id}
                         >
                           {loadingDelete === user._id ? (
@@ -241,7 +249,10 @@ const Performer = ({
                         ) : (
                           <button 
                             className="w-1/2 h-5 sm:h-7 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase"
-                            onClick={() => handleReject(user._id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleReject(user._id);
+                            }}
                             disabled={loadingReject === user._id}
                           >
                             {loadingReject === user._id ? (
@@ -256,7 +267,10 @@ const Performer = ({
                       <div className="flex items-center mb-1">
                         <button 
                           className="w-full h-5 sm:h-7 rounded-full bg-[#FF00A2] text-white font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase"
-                          onClick={() => handleApprove(user._id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleApprove(user._id);
+                          }}
                           disabled={loadingApprove === user._id}
                         >
                           {loadingApprove === user._id ? (
@@ -266,7 +280,10 @@ const Performer = ({
                       </div>
                       <button 
                         className="w-full h-5 sm:h-7 rounded-full border border-gray-600 text-white font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase"
-                        onClick={() => handleDelete(user._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(user._id);
+                        }}
                         disabled={loadingDelete === user._id}
                       >
                         {loadingDelete === user._id ? (

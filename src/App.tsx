@@ -15,6 +15,7 @@ import ReviewsPage from "./pages/reviews";
 import PerformerPage from "./pages/performers";
 import Privacy from "./components/privacy";
 import Terms from "./components/terms";
+import PerformerDetailPage from './pages/performers/detail';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="media" element={<Media />} />
             <Route path="banner" element={<BannerPage />} />
             <Route path="/reviews" element={<ReviewsPage />} />
+            <Route path="/performers/:id" element={<PerformerDetailPage />} />
           </Route>
         </Route>
       </Routes>

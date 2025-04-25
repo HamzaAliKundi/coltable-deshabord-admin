@@ -19,6 +19,9 @@ export const performerApi = createApi({
         return url;
       }
     }),
+    getSinglePerformer: builder.query({
+      query: (id) => `/api/admin/performer/get-single-performer/${id}`
+    }),
     updatePerformerStatus: builder.mutation({
       query: ({ id, status }) => ({
         url: `/api/admin/performer/update-performer/${id}`,
@@ -37,6 +40,7 @@ export const performerApi = createApi({
 
 export const { 
   useGetAllPerformersQuery, 
+  useGetSinglePerformerQuery,
   useUpdatePerformerStatusMutation,
   useDeletePerformerMutation 
 } = performerApi;
