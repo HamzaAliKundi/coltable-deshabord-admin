@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Pagination from '../../common/Pagination';
 import { useUpdatePerformerStatusMutation, useDeletePerformerMutation } from '../../apis/performer';
@@ -37,6 +37,27 @@ const Performer = ({
   const [loadingApprove, setLoadingApprove] = useState('');
   const [loadingReject, setLoadingReject] = useState('');
   const [loadingDelete, setLoadingDelete] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredOptions = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return [
+      { value: 'all', label: 'All Areas & Status' },
+      { value: 'approved', label: 'Approved Performers' },
+      { value: 'rejected', label: 'Rejected Performers' },
+      ...cityOptions
+    ].filter(option => 
+      option.label.toLowerCase().includes(query)
+    );
+  }, [searchQuery, cityOptions]);
+
+  const selectedLabel = useMemo(() => {
+    if (selectedFilter === 'all') return 'All Areas & Status';
+    if (selectedFilter === 'approved') return 'Approved Performers';
+    if (selectedFilter === 'rejected') return 'Rejected Performers';
+    return cityOptions.find(city => city.label === selectedFilter)?.label || 'All Areas & Status';
+  }, [selectedFilter, cityOptions]);
 
   const handleApprove = async (id: string) => {
     if (loadingApprove) return;
@@ -105,23 +126,48 @@ const Performer = ({
           </button>
         </div>
         <div className="relative">
-          <select 
-            className="w-[100px] sm:w-[121px] h-[30px] sm:h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-2 sm:px-3 pr-6 sm:pr-8 appearance-none outline-none text-xs sm:text-sm"
-            value={selectedFilter}
-            onChange={(e) => onFilterChange(e.target.value)}
+          <div 
+            className="w-[200px] sm:w-[250px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 cursor-pointer flex items-center"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
-            <option value="all">All Areas</option>
-            {cityOptions.map((city) => (
-              <option key={city.value} value={city.label}>
-                {city.label}
-              </option>
-            ))}
-          </select>
-          <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <span className="text-xs sm:text-sm truncate">{selectedLabel}</span>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
           </div>
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-1 w-[200px] sm:w-[250px] bg-[#212121] rounded-[8px] border border-[#FF00A2] z-10">
+              <div className="p-2">
+                <input
+                  type="text"
+                  className="w-full h-[30px] rounded-[4px] bg-black text-white text-xs px-2 outline-none border border-[#FF00A2]"
+                  placeholder="Search city or status..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="max-h-[200px] overflow-y-auto">
+                {filteredOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className={`px-3 py-2 text-xs sm:text-sm cursor-pointer hover:bg-[#FF00A2]/10 ${
+                      selectedFilter === option.value ? 'bg-[#FF00A2]/20' : ''
+                    }`}
+                    onClick={() => {
+                      onFilterChange(option.value);
+                      setIsDropdownOpen(false);
+                      setSearchQuery('');
+                    }}
+                  >
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

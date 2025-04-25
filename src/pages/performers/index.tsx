@@ -12,7 +12,8 @@ const PerformerPage = () => {
   const { data, isLoading, isFetching, refetch } = useGetAllPerformersQuery({
     page: activeTab === 'all' ? currentPage : 1,
     limit: activeTab === 'all' ? ITEMS_PER_PAGE : 100,
-    address: selectedFilter !== 'all' ? selectedFilter : undefined
+    address: selectedFilter !== 'all' && !['approved', 'rejected'].includes(selectedFilter) ? selectedFilter : undefined,
+    status: ['approved', 'rejected'].includes(selectedFilter) ? selectedFilter : undefined
   });
 
   const rejectedPerformers = data?.docs?.filter((user: any) => user.status === 'rejected') || [];
