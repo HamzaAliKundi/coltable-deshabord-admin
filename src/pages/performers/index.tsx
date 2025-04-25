@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useGetAllPerformersQuery } from '../../apis/performer';
 import Performer from '../../components/performer/perofrmer';
+import { cityOptions } from '../../city';
 
 const PerformerPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedFilter, setSelectedFilter] = useState('all');
   const ITEMS_PER_PAGE = 8;
   
   const { data, isLoading, isFetching, refetch } = useGetAllPerformersQuery({
     page: activeTab === 'all' ? currentPage : 1,
-    limit: activeTab === 'all' ? ITEMS_PER_PAGE : 100
+    limit: activeTab === 'all' ? ITEMS_PER_PAGE : 100,
+    address: selectedFilter !== 'all' ? selectedFilter : undefined
   });
 
   const rejectedPerformers = data?.docs?.filter((user: any) => user.status === 'rejected') || [];
@@ -30,6 +33,11 @@ const PerformerPage = () => {
     setCurrentPage(1);
   };
 
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+    setCurrentPage(1);
+  };
+
   const handlePageChange = (page: number) => setCurrentPage(page);
 
   return (
@@ -44,6 +52,9 @@ const PerformerPage = () => {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         refetch={refetch}
+        selectedFilter={selectedFilter}
+        onFilterChange={handleFilterChange}
+        cityOptions={cityOptions}
       />
     </div>
   );

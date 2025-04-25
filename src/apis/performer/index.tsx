@@ -12,7 +12,11 @@ export const performerApi = createApi({
   }),
   endpoints: (builder) => ({
     getAllPerformers: builder.query({
-      query: ({page = 1, limit = 10}) => `/api/admin/performer/get-all-performers?limit=${limit}&page=${page}`
+      query: ({page = 1, limit = 10, address}) => {
+        let url = `/api/admin/performer/get-all-performers?limit=${limit}&page=${page}`;
+        if (address && address !== 'all') url += `&address=${encodeURIComponent(address)}`;
+        return url;
+      }
     }),
     updatePerformerStatus: builder.mutation({
       query: ({ id, status }) => ({

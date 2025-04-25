@@ -13,6 +13,9 @@ interface PerformerProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   refetch: () => void;
+  selectedFilter: string;
+  onFilterChange: (filter: string) => void;
+  cityOptions: { value: string; label: string }[];
 }
 
 const Performer = ({ 
@@ -24,7 +27,10 @@ const Performer = ({
   onPageChange,
   activeTab,
   onTabChange,
-  refetch 
+  refetch,
+  selectedFilter,
+  onFilterChange,
+  cityOptions
 }: PerformerProps) => {
   const [updateStatus] = useUpdatePerformerStatusMutation();
   const [deletePerformer] = useDeletePerformerMutation();
@@ -99,10 +105,17 @@ const Performer = ({
           </button>
         </div>
         <div className="relative">
-          <select className="w-[100px] sm:w-[121px] h-[30px] sm:h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-2 sm:px-3 pr-6 sm:pr-8 appearance-none outline-none text-xs sm:text-sm">
-            <option value="">Filter by</option>
-            <option value="name">Name</option>
-            <option value="status">Status</option>
+          <select 
+            className="w-[100px] sm:w-[121px] h-[30px] sm:h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-2 sm:px-3 pr-6 sm:pr-8 appearance-none outline-none text-xs sm:text-sm"
+            value={selectedFilter}
+            onChange={(e) => onFilterChange(e.target.value)}
+          >
+            <option value="all">All Areas</option>
+            {cityOptions.map((city) => (
+              <option key={city.value} value={city.label}>
+                {city.label}
+              </option>
+            ))}
           </select>
           <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
