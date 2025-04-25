@@ -27,7 +27,7 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
 
   return (
     <div className="bg-black p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="w-full md:w-1/3">
             <img 
@@ -38,47 +38,81 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
           </div>
           <div className="w-full md:w-2/3">
             <h1 className="text-white text-2xl font-bold mb-4">{venue.name}</h1>
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Description</h2>
-                <p className="text-white">{venue.description}</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-[#212121] p-4 rounded-lg">
+                <h2 className="text-gray-400 text-sm mb-2">Venue Type</h2>
+                <p className="text-white">{venue.venueType}</p>
               </div>
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Location</h2>
-                <p className="text-white">{venue.location}</p>
-              </div>
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Hours of Operation</h2>
+              <div className="bg-[#212121] p-4 rounded-lg">
+                <h2 className="text-gray-400 text-sm mb-2">Hours of Operation</h2>
                 <p className="text-white">{venue.hoursOfOperation}</p>
               </div>
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Contact Information</h2>
+              <div className="bg-[#212121] p-4 rounded-lg">
+                <h2 className="text-gray-400 text-sm mb-2">Location</h2>
+                <p className="text-white">{venue.location}</p>
+              </div>
+              <div className="bg-[#212121] p-4 rounded-lg">
+                <h2 className="text-gray-400 text-sm mb-2">Top Drag Performers</h2>
+                <p className="text-white">{venue.topDragPerformers}</p>
+              </div>
+            </div>
+
+            <div className="bg-[#212121] p-4 rounded-lg mb-6">
+              <h2 className="text-gray-400 text-sm mb-2">Description</h2>
+              <p className="text-white">{venue.description}</p>
+            </div>
+
+            <div className="bg-[#212121] p-4 rounded-lg mb-6">
+              <h2 className="text-gray-400 text-sm mb-2">Contact Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <p className="text-white">Email: {venue.email}</p>
                 <p className="text-white">Phone: {venue.phone}</p>
               </div>
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Venue Type</h2>
-                <p className="text-white">{venue.venueType}</p>
+            </div>
+
+            <div className="bg-[#212121] p-4 rounded-lg mb-6">
+              <h2 className="text-gray-400 text-sm mb-2">Facilities</h2>
+              <div className="flex flex-wrap gap-2">
+                {venue.facilities?.map((facility: string) => (
+                  <span key={facility} className="bg-[#FF00A2]/20 text-white px-3 py-1 rounded-full text-sm">
+                    {facility.replace(/-/g, ' ')}
+                  </span>
+                ))}
               </div>
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Top Drag Performers</h2>
-                <p className="text-white">{venue.topDragPerformers}</p>
-              </div>
-              <div>
-                <h2 className="text-gray-400 text-sm mb-1">Facilities</h2>
-                <div className="flex flex-wrap gap-2">
-                  {venue.facilities?.map((facility: string) => (
-                    <span key={facility} className="bg-[#FF00A2]/20 text-white px-3 py-1 rounded-full text-sm">
-                      {facility.replace(/-/g, ' ')}
-                    </span>
-                  ))}
+            </div>
+
+            <div className="bg-[#212121] p-4 rounded-lg">
+              <h2 className="text-gray-400 text-sm mb-2">Status & Ratings</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <h3 className="text-gray-400 text-xs mb-1">Status</h3>
+                  <p className={`${
+                    venue.status === 'approved' ? 'text-green-500' : 
+                    venue.status === 'rejected' ? 'text-red-500' : 
+                    'text-yellow-500'
+                  }`}>
+                    {venue.status}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-gray-400 text-xs mb-1">Overall Rating</h3>
+                  <p className="text-white">{venue.overAllRating || 'No ratings yet'}</p>
+                </div>
+                <div>
+                  <h3 className="text-gray-400 text-xs mb-1">Rating Count</h3>
+                  <p className="text-white">{venue.ratingCount || 0}</p>
+                </div>
+                <div>
+                  <h3 className="text-gray-400 text-xs mb-1">Created At</h3>
+                  <p className="text-white">{new Date(venue.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#212121] rounded-lg p-6 mb-8">
+        <div className="bg-[#212121] rounded-lg p-6">
           <h2 className="text-white text-xl font-bold mb-4">Social Media</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {venue.socialMediaLinks?.facebook && (
@@ -133,34 +167,6 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
                 YouTube
               </a>
             )}
-          </div>
-        </div>
-
-        <div className="bg-[#212121] rounded-lg p-6">
-          <h2 className="text-white text-xl font-bold mb-4">Status & Ratings</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-gray-400 text-sm mb-1">Status</h3>
-              <p className={`${
-                venue.status === 'approved' ? 'text-green-500' : 
-                venue.status === 'rejected' ? 'text-red-500' : 
-                'text-yellow-500'
-              }`}>
-                {venue.status}
-              </p>
-            </div>
-            <div>
-              <h3 className="text-gray-400 text-sm mb-1">Overall Rating</h3>
-              <p className="text-white">{venue.overAllRating || 'No ratings yet'}</p>
-            </div>
-            <div>
-              <h3 className="text-gray-400 text-sm mb-1">Rating Count</h3>
-              <p className="text-white">{venue.ratingCount || 0}</p>
-            </div>
-            <div>
-              <h3 className="text-gray-400 text-sm mb-1">Created At</h3>
-              <p className="text-white">{new Date(venue.createdAt).toLocaleDateString()}</p>
-            </div>
           </div>
         </div>
       </div>
