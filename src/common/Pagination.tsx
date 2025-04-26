@@ -3,9 +3,12 @@ interface PaginationProps {
   totalPages: number;
   isLoading?: boolean;
   onPageChange: (page: number) => void;
+  showPagination?: boolean;
 }
 
-const Pagination = ({ currentPage, totalPages, isLoading = false, onPageChange }: PaginationProps) => {
+const Pagination = ({ currentPage, totalPages, isLoading = false, onPageChange, showPagination = true }: PaginationProps) => {
+  if (!showPagination) return null;
+
   const renderPageNumbers = () => {
     const pages = [];
     for (let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) {

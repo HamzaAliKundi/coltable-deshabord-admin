@@ -33,6 +33,8 @@ const Performer = ({
   onFilterChange,
   cityOptions
 }: PerformerProps) => {
+  const ITEMS_PER_PAGE = 8;
+  const rejectedPerformers = perFormerData?.filter((user: any) => user.status === 'rejected') || [];
   const [updateStatus] = useUpdatePerformerStatusMutation();
   const [deletePerformer] = useDeletePerformerMutation();
   const [loadingApprove, setLoadingApprove] = useState('');
@@ -89,7 +91,7 @@ const Performer = ({
     if (loadingApprove) return;
     try {
       setLoadingApprove(id);
-     const res =  await updateStatus({ id, status: 'approved' }).unwrap();
+      const res = await updateStatus({ id, status: 'approved' }).unwrap();
       if (res.success === true) {
         toast.success('Performer approved successfully');
         await refetch();
@@ -400,6 +402,7 @@ const Performer = ({
             totalPages={totalPages}
             isLoading={isPageLoading}
             onPageChange={onPageChange}
+            showPagination={true}
           />
         )}
       </div>
