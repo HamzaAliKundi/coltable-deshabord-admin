@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Pagination from '../../common/Pagination';
 import { useUpdatePerformerStatusMutation, useDeletePerformerMutation } from '../../apis/performer';
+import toast from 'react-hot-toast';
 
 interface PerformerProps {
   perFormerData: any[];
@@ -64,9 +65,13 @@ const Performer = ({
     if (loadingApprove) return;
     try {
       setLoadingApprove(id);
-      await updateStatus({ id, status: 'approved' }).unwrap();
-      await refetch();
+     const res =  await updateStatus({ id, status: 'approved' }).unwrap();
+      if (res.success === true) {
+        toast.success('Performer approved successfully');
+        await refetch();
+      }
     } catch (error) {
+      toast.error('Failed to approve performer');
     } finally {
       setLoadingApprove('');
     }
@@ -76,9 +81,13 @@ const Performer = ({
     if (loadingReject) return;
     try {
       setLoadingReject(id);
-      await updateStatus({ id, status: 'rejected' }).unwrap();
-      await refetch();
+      const res = await updateStatus({ id, status: 'rejected' }).unwrap();
+      if (res.success === true) {
+        toast.success('Performer rejected successfully');
+        await refetch();
+      }
     } catch (error) {
+      toast.error('Failed to reject performer');
     } finally {
       setLoadingReject('');
     }
@@ -88,9 +97,13 @@ const Performer = ({
     if (loadingDelete) return;
     try {
       setLoadingDelete(id);
-      await deletePerformer(id).unwrap();
-      await refetch();
+      const res = await deletePerformer(id).unwrap();
+      if (res.success === true) {
+        toast.success('Performer deleted successfully');
+        await refetch();
+      }
     } catch (error) {
+      toast.error('Failed to delete performer');
     } finally {
       setLoadingDelete('');
     }
