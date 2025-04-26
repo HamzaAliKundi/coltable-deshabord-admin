@@ -14,8 +14,8 @@ interface PerformerProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   refetch: () => void;
-  selectedFilter: string;
-  onFilterChange: (filter: string) => void;
+  selectedFilter: { city: string; status: string };
+  onFilterChange: (filter: { city: string; status: string }) => void;
   cityOptions: { value: string; label: string }[];
 }
 
@@ -38,28 +38,52 @@ const Performer = ({
   const [loadingApprove, setLoadingApprove] = useState('');
   const [loadingReject, setLoadingReject] = useState('');
   const [loadingDelete, setLoadingDelete] = useState('');
+  const [selectedCity, setSelectedCity] = useState('all');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const filteredOptions = useMemo(() => {
+  const filteredCityOptions = useMemo(() => {
     const query = searchQuery.toLowerCase();
     return [
-      { value: 'all', label: 'All Areas & Status' },
-      { value: 'approved', label: 'Approved Performers' },
-      { value: 'rejected', label: 'Rejected Performers' },
+      { value: 'all', label: 'All Cities' },
       ...cityOptions
     ].filter(option => 
       option.label.toLowerCase().includes(query)
     );
   }, [searchQuery, cityOptions]);
 
-  const selectedLabel = useMemo(() => {
-    if (selectedFilter === 'all') return 'All Areas & Status';
-    if (selectedFilter === 'approved') return 'Approved Performers';
-    if (selectedFilter === 'rejected') return 'Rejected Performers';
-    return cityOptions.find(city => city.label === selectedFilter)?.label || 'All Areas & Status';
-  }, [selectedFilter, cityOptions]);
+  const statusOptions = [
+    { value: 'all', label: 'All Status' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
+  ];
+
+  const selectedCityLabel = useMemo(() => {
+    if (selectedCity === 'all') return 'All Cities';
+    return cityOptions.find(city => city.value === selectedCity)?.label || 'All Cities';
+  }, [selectedCity, cityOptions]);
+
+  const selectedStatusLabel = useMemo(() => {
+    if (selectedStatus === 'all') return 'All Status';
+    return statusOptions.find(status => status.value === selectedStatus)?.label || 'All Status';
+  }, [selectedStatus]);
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    setSelectedStatus('all');
+    onFilterChange({ city, status: 'all' });
+    setIsDropdownOpen(false);
+    setSearchQuery('');
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+    onFilterChange({ city: selectedCity, status });
+    setIsStatusDropdownOpen(false);
+  };
 
   const handleApprove = async (id: string) => {
     if (loadingApprove) return;
@@ -136,47 +160,77 @@ const Performer = ({
             )}
           </button>
         </div>
-        <div className="relative">
-          <div 
-            className="w-[200px] sm:w-[250px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 cursor-pointer flex items-center"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            <span className="text-xs sm:text-sm truncate">{selectedLabel}</span>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+        <div className="flex gap-4">
+          <div className="relative">
+            <div 
+              className="w-[200px] sm:w-[250px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 cursor-pointer flex items-center"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <span className="text-xs sm:text-sm truncate">{selectedCityLabel}</span>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
             </div>
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-1 w-[200px] sm:w-[250px] bg-[#212121] rounded-[8px] border border-[#FF00A2] z-10">
+                <div className="p-2">
+                  <input
+                    type="text"
+                    className="w-full h-[30px] rounded-[4px] bg-black text-white text-xs px-2 outline-none border border-[#FF00A2]"
+                    placeholder="Search city..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div className="max-h-[200px] overflow-y-auto">
+                  {filteredCityOptions.map((option) => (
+                    <div
+                      key={option.value}
+                      className={`px-3 py-2 text-xs sm:text-sm cursor-pointer hover:bg-[#FF00A2]/10 ${
+                        selectedCity === option.value ? 'bg-[#FF00A2]/20' : ''
+                      }`}
+                      onClick={() => handleCityChange(option.value)}
+                    >
+                      {option.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-1 w-[200px] sm:w-[250px] bg-[#212121] rounded-[8px] border border-[#FF00A2] z-10">
-              <div className="p-2">
-                <input
-                  type="text"
-                  className="w-full h-[30px] rounded-[4px] bg-black text-white text-xs px-2 outline-none border border-[#FF00A2]"
-                  placeholder="Search city or status..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+          {selectedCity !== 'all' && (
+            <div className="relative">
+              <div 
+                className="w-[200px] sm:w-[250px] h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-3 pr-8 cursor-pointer flex items-center"
+                onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+              >
+                <span className="text-xs sm:text-sm truncate">{selectedStatusLabel}</span>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1L5 5L9 1" stroke="#BEBEBE" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
               </div>
-              <div className="max-h-[200px] overflow-y-auto">
-                {filteredOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    className={`px-3 py-2 text-xs sm:text-sm cursor-pointer hover:bg-[#FF00A2]/10 ${
-                      selectedFilter === option.value ? 'bg-[#FF00A2]/20' : ''
-                    }`}
-                    onClick={() => {
-                      onFilterChange(option.value);
-                      setIsDropdownOpen(false);
-                      setSearchQuery('');
-                    }}
-                  >
-                    {option.label}
+              {isStatusDropdownOpen && (
+                <div className="absolute right-0 mt-1 w-[200px] sm:w-[250px] bg-[#212121] rounded-[8px] border border-[#FF00A2] z-10">
+                  <div className="max-h-[200px] overflow-y-auto">
+                    {statusOptions.map((option) => (
+                      <div
+                        key={option.value}
+                        className={`px-3 py-2 text-xs sm:text-sm cursor-pointer hover:bg-[#FF00A2]/10 ${
+                          selectedStatus === option.value ? 'bg-[#FF00A2]/20' : ''
+                        }`}
+                        onClick={() => handleStatusChange(option.value)}
+                      >
+                        {option.label}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>

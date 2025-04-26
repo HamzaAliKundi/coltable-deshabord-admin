@@ -3,17 +3,22 @@ import { useGetAllPerformersQuery } from '../../apis/performer';
 import Performer from '../../components/performer/perofrmer';
 import { cityOptions } from '../../city';
 
+interface FilterState {
+  city: string;
+  status: string;
+}
+
 const PerformerPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [selectedFilter, setSelectedFilter] = useState<FilterState>({ city: 'all', status: 'all' });
   const ITEMS_PER_PAGE = 8;
   
   const { data, isLoading, isFetching, refetch } = useGetAllPerformersQuery({
     page: activeTab === 'all' ? currentPage : 1,
     limit: activeTab === 'all' ? ITEMS_PER_PAGE : 100,
-    address: selectedFilter !== 'all' && !['approved', 'rejected'].includes(selectedFilter) ? selectedFilter : undefined,
-    status: ['approved', 'rejected'].includes(selectedFilter) ? selectedFilter : undefined
+    address: selectedFilter.city !== 'all' ? selectedFilter.city : undefined,
+    status: selectedFilter.status !== 'all' ? selectedFilter.status : undefined
   });
 
   const rejectedPerformers = data?.docs?.filter((user: any) => user.status === 'rejected') || [];
@@ -34,7 +39,7 @@ const PerformerPage = () => {
     setCurrentPage(1);
   };
 
-  const handleFilterChange = (filter: string) => {
+  const handleFilterChange = (filter: FilterState) => {
     setSelectedFilter(filter);
     setCurrentPage(1);
   };
