@@ -241,6 +241,34 @@ const Performer = ({
           <div className="col-span-full flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF00A2]"></div>
           </div>
+        ) : perFormerData?.length === 0 ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-20 space-y-4">
+            <div className="w-20 h-20 rounded-full bg-[#FF00A2]/10 flex items-center justify-center">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#FF00A2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 9L9 15" stroke="#FF00A2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 9L15 15" stroke="#FF00A2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className="text-white text-xl font-bold font-['Space_Grotesk']">
+              {activeTab === 'rejected' 
+                ? 'No Rejected Accounts Found' 
+                : selectedFilter.city !== 'all' && selectedFilter.status !== 'all'
+                ? `No ${selectedFilter.status === 'approved' ? 'Approved' : 'Rejected'} Performers in ${selectedCityLabel}`
+                : selectedFilter.city !== 'all'
+                ? `No Performers Found in ${selectedCityLabel}`
+                : 'No Performers Found'}
+            </h3>
+            <p className="text-gray-400 text-sm text-center max-w-md">
+              {activeTab === 'rejected' 
+                ? 'There are currently no rejected accounts in the system.'
+                : selectedFilter.city !== 'all' && selectedFilter.status !== 'all'
+                ? `Try adjusting your filters or check back later for ${selectedFilter.status === 'approved' ? 'approved' : 'rejected'} performers in this city.`
+                : selectedFilter.city !== 'all'
+                ? 'Try adjusting your filters or check back later for performers in this city.'
+                : 'Try adjusting your filters or check back later for new performers.'}
+            </p>
+          </div>
         ) : (
           perFormerData?.map((user: any) => (
             <div
