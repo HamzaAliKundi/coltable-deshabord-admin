@@ -153,7 +153,7 @@ const Venues = ({
                 </h2>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
                   <p>Location: {venue.location}</p>
-                  <p>Capacity: {venue.capacity}</p>
+                  <p>Venue Type: {venue.venueType}</p>
                   <p className={`${
                     venue.status === 'approved' ? 'text-green-500' : 
                     venue.status === 'rejected' ? 'text-red-500' : 
