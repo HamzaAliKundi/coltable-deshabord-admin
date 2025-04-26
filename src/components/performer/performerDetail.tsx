@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGetSinglePerformerQuery } from '../../apis/performer';
 
 interface PerformerDetailProps {
@@ -8,6 +8,7 @@ interface PerformerDetailProps {
 const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
   const { data: response, isLoading } = useGetSinglePerformerQuery(performerId);
   const performer = response?.performer;
+  const [mainImageIndex, setMainImageIndex] = useState(0);
 
   if (isLoading) {
     return (
@@ -25,16 +26,37 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
     );
   }
 
+  const handleImageClick = (index: number) => {
+    setMainImageIndex(index);
+  };
+
   return (
     <div className="bg-black p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="w-full md:w-1/3">
-            <img 
-              src={performer.images?.[0] || performer.profilePhoto || "/events/event.svg"} 
-              alt={performer.name} 
-              className="w-full h-64 object-cover rounded-lg"
-            />
+            <div className="mb-4">
+              <img 
+                src={performer.images?.[mainImageIndex] || performer.profilePhoto || "/events/event.svg"} 
+                alt={performer.name} 
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            </div>
+            {performer.images && performer.images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {performer.images.map((image: string, index: number) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`${performer.name} - Image ${index + 1}`}
+                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer transition-opacity ${
+                      index === mainImageIndex ? 'ring-2 ring-[#FF00A2]' : 'opacity-70 hover:opacity-100'
+                    }`}
+                    onClick={() => handleImageClick(index)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           <div className="w-full md:w-2/3">
             <h1 className="text-white text-2xl font-bold mb-4">{performer.name}</h1>
