@@ -280,7 +280,7 @@ const Performer = ({
             >
               <div className="relative">
                 <img
-                  src={user.images[0]}
+                  src={user?.profilePhoto}
                   alt={user.firstName}
                   className="w-full h-[120px] sm:h-[150px] rounded-[8px] object-cover"
                 />
