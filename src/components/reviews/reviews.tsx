@@ -96,44 +96,57 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <button 
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                isApproved 
-                  ? 'bg-green-600 text-white cursor-default' 
-                  : 'bg-[#FF00A2] hover:bg-[#FF00A2]/80 text-white'
-              }`}
-              onClick={handleApprove}
-              disabled={isApproved || isApproving || isRejecting || isUpdating}
-            >
-              {isApproving ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : isApproved ? 'Approved' : 'Approve'}
-            </button>
-            <button 
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                isRejected 
-                  ? 'bg-red-600 text-white cursor-default' 
-                  : 'bg-[#212121] hover:bg-[#333333] text-white'
-              }`}
-              onClick={handleReject}
-              disabled={isRejected || isApproving || isRejecting || isUpdating}
-            >
-              {isRejecting ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : isRejected ? 'Rejected' : 'Reject'}
-            </button>
+            {isApproved ? (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Approved
+              </span>
+            ) : (
+              <button 
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                  isApproving 
+                    ? 'bg-[#FF00A2]/20 text-white cursor-wait' 
+                    : 'bg-[#FF00A2] hover:bg-[#FF00A2]/80 text-white'
+                }`}
+                onClick={handleApprove}
+                disabled={isApproving || isRejecting || isUpdating}
+              >
+                {isApproving ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing
+                  </>
+                ) : 'Approve'}
+              </button>
+            )}
+            
+            {isRejected ? (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                Rejected
+              </span>
+            ) : (
+              <button 
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                  isRejecting 
+                    ? 'bg-gray-200 text-gray-800 cursor-wait' 
+                    : 'bg-gray-700 hover:bg-gray-600 text-white'
+                }`}
+                onClick={handleReject}
+                disabled={isApproving || isRejecting || isUpdating}
+              >
+                {isRejecting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing
+                  </>
+                ) : 'Reject'}
+              </button>
+            )}
           </div>
         </div>
         <p className="font-['Space_Grotesk'] mt-8 font-normal text-[18px] leading-[100%] tracking-[0%] align-middle capitalize text-white/80">
@@ -157,7 +170,14 @@ const Reviews = () => {
   const { data, isLoading, error } = useGetReviewsQuery({ page, limit: 10 });
   const [updateReviewStatus, { isLoading: isUpdating }] = useUpdateReviewStatusMutation();
 
-  if (isLoading) return <div className="p-4 text-center text-white">Loading reviews...</div>;
+  if (isLoading) return (
+    <div className="p-4 md:px-8 py-16 bg-black">
+      <div className="col-span-full flex justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FF00A2]"></div>
+      </div>
+    </div>
+  );
+  
   if (error) return <div className="p-4 text-center text-red-500">Error loading reviews</div>;
 
   const reviewsData = data as ReviewsResponse;
