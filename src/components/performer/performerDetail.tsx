@@ -9,6 +9,8 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
   const { data: response, isLoading } = useGetSinglePerformerQuery(performerId);
   const performer = response?.performer;
   const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [mainVideoIndex, setMainVideoIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
 
   if (isLoading) {
     return (
@@ -30,19 +32,58 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
     setMainImageIndex(index);
   };
 
+  const handleVideoClick = (index: number) => {
+    setMainVideoIndex(index);
+  };
+
+  const hasImages = performer.images && performer.images.length > 0;
+  const hasVideos = performer.videos && performer.videos.length > 0;
+
   return (
     <div className="bg-black p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6 mb-8">
           <div className="w-full md:w-1/3">
-            <div className="mb-4">
-              <img 
-                src={performer.images?.[mainImageIndex] || performer.profilePhoto || "/events/event.svg"} 
-                alt={performer.name} 
-                className="w-full h-64 object-cover rounded-lg"
-              />
+            {/* Media Tabs */}
+            <div className="flex mb-4 border-b border-gray-700">
+              {hasImages && (
+                <button 
+                  className={`py-2 px-4 ${activeTab === 'images' ? 'text-[#FF00A2] border-b-2 border-[#FF00A2]' : 'text-gray-400'}`}
+                  onClick={() => setActiveTab('images')}
+                >
+                  Images
+                </button>
+              )}
+              {hasVideos && (
+                <button 
+                  className={`py-2 px-4 ${activeTab === 'videos' ? 'text-[#FF00A2] border-b-2 border-[#FF00A2]' : 'text-gray-400'}`}
+                  onClick={() => setActiveTab('videos')}
+                >
+                  Videos
+                </button>
+              )}
             </div>
-            {performer.images && performer.images.length > 1 && (
+
+            {/* Main Media Display */}
+            <div className="mb-4">
+              {activeTab === 'images' && (
+                <img 
+                  src={performer.images?.[mainImageIndex] || performer.profilePhoto || "/events/event.svg"} 
+                  alt={performer.name} 
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+              )}
+              {activeTab === 'videos' && (
+                <video 
+                  src={performer.videos?.[mainVideoIndex]} 
+                  controls
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+              )}
+            </div>
+
+            {/* Image Thumbnails */}
+            {activeTab === 'images' && performer.images && performer.images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {performer.images.map((image: string, index: number) => (
                   <img
@@ -54,6 +95,31 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
                     }`}
                     onClick={() => handleImageClick(index)}
                   />
+                ))}
+              </div>
+            )}
+
+            {/* Video Thumbnails */}
+            {activeTab === 'videos' && performer.videos && performer.videos.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {performer.videos.map((video: string, index: number) => (
+                  <div 
+                    key={index}
+                    className={`relative w-20 h-20 rounded-lg cursor-pointer overflow-hidden ${
+                      index === mainVideoIndex ? 'ring-2 ring-[#FF00A2]' : 'opacity-70 hover:opacity-100'
+                    }`}
+                    onClick={() => handleVideoClick(index)}
+                  >
+                    <video 
+                      src={video} 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3 2a1 1 0 001.555-1.664V6.832a1 1 0 00-1.555-1.664l-3 2z" />
+                      </svg>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
