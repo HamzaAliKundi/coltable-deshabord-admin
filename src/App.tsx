@@ -16,6 +16,7 @@ import PerformerPage from "./pages/performers";
 import Privacy from "./components/privacy";
 import Terms from "./components/terms";
 import PerformerDetailPage from './pages/performers/detail';
+import PerformerEventDetail from "./components/events/details/PerformerEventDetail";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route path="performers" element={<PerformerPage />} /> 
             <Route path="events" element={<EventsPage />} />
+            <Route path="events/:id" element={<PerformerEventDetail />} />
             <Route path="venues" element={<VenuesPage />} />  
             <Route path="venues/:id" element={<VenueDetailPage />} />
             <Route path="settings" element={<SettingsPage />} />  

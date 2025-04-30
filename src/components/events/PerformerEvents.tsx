@@ -2,6 +2,7 @@ import { useState } from "react";
 import Pagination from "../../common/Pagination";
 import { useGetAdminEventsQuery, useUpdateEventStatusMutation } from "../../apis/events";
 import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 interface Event {
     _id: string;
@@ -111,7 +112,7 @@ const PerformerEvents = () => {
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-                                <button className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 bg-[#FF00A2] text-white text-xs sm:text-sm font-medium rounded-[30px]">View Detail</button>
+                                <Link to={`/events/${event._id}`} className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 bg-[#FF00A2] text-white text-xs sm:text-sm font-medium rounded-[30px] flex items-center justify-center">View Detail</Link>
                                 <button 
                                     disabled={event.status === 'approved' || (updatingEventId === event._id && updatingAction === 'approve')}
                                     className={getButtonStyles(event.status, 'approve')}
