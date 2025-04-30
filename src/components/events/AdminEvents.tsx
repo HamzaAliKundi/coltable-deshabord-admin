@@ -43,28 +43,6 @@ const AdminEvents = () => {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
-    const getButtonStyles = (status: string, buttonType: 'approve' | 'reject') => {
-        const baseStyles = "flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 text-white text-xs sm:text-sm font-medium rounded-[30px]";
-        
-        if (buttonType === 'approve') {
-            if (status === 'approved') {
-                return `${baseStyles} bg-[#FF00A2] cursor-not-allowed opacity-50`;
-            }
-            if (status === 'rejected') {
-                return `${baseStyles} border-2 border-[#FF00A2] hover:bg-[#FF00A2] transition-colors`;
-            }
-            return `${baseStyles} border-2 border-[#FF00A2] hover:bg-[#FF00A2] transition-colors`;
-        } else {
-            if (status === 'rejected') {
-                return `${baseStyles} bg-[#FF00A2] cursor-not-allowed opacity-50`;
-            }
-            if (status === 'approved') {
-                return `${baseStyles} border-2 border-[#FF00A2] hover:bg-[#FF00A2] transition-colors`;
-            }
-            return `${baseStyles} border-2 border-[#FF00A2] hover:bg-[#FF00A2] transition-colors`;
-        }
-    };
-
     if (!events) return null;
 
     return (
@@ -97,18 +75,6 @@ const AdminEvents = () => {
                             </div>
                             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                                 <button className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 bg-[#FF00A2] text-white text-xs sm:text-sm font-medium rounded-[30px]">View Detail</button>
-                                <button 
-                                    disabled={event.status === 'approved'}
-                                    className={getButtonStyles(event.status, 'approve')}
-                                >
-                                    {event.status === 'approved' ? 'Approved' : 'Approve'}
-                                </button>
-                                <button 
-                                    disabled={event.status === 'rejected'}
-                                    className={getButtonStyles(event.status, 'reject')}
-                                >
-                                    {event.status === 'rejected' ? 'Rejected' : 'Reject'}
-                                </button>
                             </div>
                         </div>
                     ))
