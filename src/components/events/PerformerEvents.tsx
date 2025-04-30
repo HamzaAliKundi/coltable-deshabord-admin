@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Pagination from "../../common/Pagination";
-import { useGetAdminEventsQuery } from "../../apis/events";
+import { useGetAdminEventsQuery, useUpdateEventStatusMutation } from "../../apis/events";
+import { toast } from "react-hot-toast";
 
 interface Event {
     _id: string;
@@ -17,11 +18,31 @@ interface Event {
 
 const PerformerEvents = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: events, isLoading } = useGetAdminEventsQuery({ 
+    const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
+    const [updatingAction, setUpdatingAction] = useState<'approve' | 'reject' | null>(null);
+    
+    const { data: events, isLoading, refetch } = useGetAdminEventsQuery({ 
         page: currentPage, 
         limit: 4,
         userType: 'performer'
     });
+
+    const [updateEventStatus] = useUpdateEventStatusMutation();
+
+    const handleStatusUpdate = async (eventId: string, status: 'approved' | 'rejected') => {
+        try {
+            setUpdatingEventId(eventId);
+            setUpdatingAction(status === 'approved' ? 'approve' : 'reject');
+            await updateEventStatus({ eventId, status }).unwrap();
+            toast.success(`Event ${status} successfully`);
+            refetch();
+        } catch (error) {
+            toast.error('Failed to update event status');
+        } finally {
+            setUpdatingEventId(null);
+            setUpdatingAction(null);
+        }
+    };
 
     const getStatusColor = (status: string) => {
         if (status === 'approved') return 'text-[#FF00A2]';
@@ -92,16 +113,22 @@ const PerformerEvents = () => {
                             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                                 <button className="flex-1 sm:flex-none h-[35px] sm:h-[40px] px-3 sm:px-4 bg-[#FF00A2] text-white text-xs sm:text-sm font-medium rounded-[30px]">View Detail</button>
                                 <button 
-                                    disabled={event.status === 'approved'}
+                                    disabled={event.status === 'approved' || (updatingEventId === event._id && updatingAction === 'approve')}
                                     className={getButtonStyles(event.status, 'approve')}
+                                    onClick={() => handleStatusUpdate(event._id, 'approved')}
                                 >
-                                    {event.status === 'approved' ? 'Approved' : 'Approve'}
+                                    {updatingEventId === event._id && updatingAction === 'approve' ? (
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                    ) : event.status === 'approved' ? 'Approved' : 'Approve'}
                                 </button>
                                 <button 
-                                    disabled={event.status === 'rejected'}
+                                    disabled={event.status === 'rejected' || (updatingEventId === event._id && updatingAction === 'reject')}
                                     className={getButtonStyles(event.status, 'reject')}
+                                    onClick={() => handleStatusUpdate(event._id, 'rejected')}
                                 >
-                                    {event.status === 'rejected' ? 'Rejected' : 'Reject'}
+                                    {updatingEventId === event._id && updatingAction === 'reject' ? (
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                                    ) : event.status === 'rejected' ? 'Rejected' : 'Reject'}
                                 </button>
                             </div>
                         </div>

@@ -22,6 +22,13 @@ export const eventsApi = createApi({
         url: "/api/admin/event/get-all-events",
         params: { page, limit, userType }
       })
+    }),
+    updateEventStatus: builder.mutation({
+      query: ({ eventId, status }) => ({
+        url: `/api/admin/event/update-event/${eventId}`,
+        method: 'PATCH',
+        body: { status }
+      })
     })
   }),
 });
@@ -29,5 +36,6 @@ export const eventsApi = createApi({
 export const { 
   useGetPerformerEventsQuery,
   useGetVenueEventsQuery, 
-  useGetAdminEventsQuery
+  useGetAdminEventsQuery,
+  useUpdateEventStatusMutation
 } = eventsApi;
