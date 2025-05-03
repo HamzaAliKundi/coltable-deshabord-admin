@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../apis/auth";
 import toast from "react-hot-toast";
 
@@ -98,9 +98,9 @@ const Signup = () => {
                 </button>
               </div>
               <div className="mt-1">
-                <a href="#" className="text-[#959092] text-sm font-['Space_Grotesk'] hover:text-[#FF02A2]">
+                <Link to="/forgot-password" className="text-[#959092] text-sm font-['Space_Grotesk'] hover:text-[#FF02A2]">
                   Forgot Password?
-                </a>
+                </Link>
               </div>
             </div>
 

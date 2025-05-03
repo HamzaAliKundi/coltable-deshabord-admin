@@ -18,6 +18,10 @@ import Terms from "./components/terms";
 import PerformerDetailPage from './pages/performers/detail';
 import PerformerEventDetail from "./components/events/details/PerformerEventDetail";
 import VenuesDetailPage from "./components/events/details/venuesDetailPage";
+import ForgotPassword from "./pages/auth/forgot-password";
+import PasswordResetEmailSent from "./pages/auth/PasswordResetEmailSent";
+import ResetPassword from "./pages/auth/reset-password";
+import PasswordChangedSuccess from "./pages/auth/PasswordChangedSuccess";
 
 function App() {
   return (
@@ -26,6 +30,10 @@ function App() {
       <Routes>
         <Route element={<PublicRoutes />}>
           <Route path="/" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/email-sent" element={<PasswordResetEmailSent />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/password-changed" element={<PasswordChangedSuccess />} />
         </Route>
 
         <Route element={<ProtectedRoutes />}>
