@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useResetPasswordMutation } from "../../apis/auth";
 // import { useResetPasswordMutation } from "../../apis/auth";
 
 const ResetPassword = () => {
@@ -14,29 +15,28 @@ const ResetPassword = () => {
 
   const navigate = useNavigate()
 
-  // const [resetPassword] = useResetPasswordMutation();
+  const [resetPassword] = useResetPasswordMutation();
 
   const onSubmit = async (data: { password: string; confirmPassword: string }) => {
-    navigate("/password-changed")
-    // if (!token) {
-    //   toast.error("Invalid reset link");
-    //   return;
-    // } 
-    // setIsLoading(true);
-    // try {
-    //   const response = await resetPassword({ token, newPassword: data.password, userType: "performer" });
-    //   if (response?.data?.success) {
-    //     toast.success("Password has been reset successfully");
-    //     navigate("password-changed")
-    //   } else {
-    //     toast.error(response?.error?.data?.error || "Failed to reset password");
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to reset password:", error);
-    //   toast.error("Failed to reset password. Please try again.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    if (!token) {
+      toast.error("Invalid reset link");
+      return;
+    } 
+    setIsLoading(true);
+    try {
+      const response = await resetPassword({ token, newPassword: data.password });
+      if (response?.data?.success) {
+        toast.success("Password has been reset successfully");
+        navigate("password-changed")
+      } else {
+        toast.error(response?.error?.data?.error || "Failed to reset password");
+      }
+    } catch (error) {
+      console.error("Failed to reset password:", error);
+      toast.error("Failed to reset password. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

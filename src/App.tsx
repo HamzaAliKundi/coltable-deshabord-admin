@@ -31,9 +31,9 @@ function App() {
         <Route element={<PublicRoutes />}>
           <Route path="/" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/email-sent" element={<PasswordResetEmailSent />} />
+          <Route path="/forgot-password/email-sent" element={<PasswordResetEmailSent />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/password-changed" element={<PasswordChangedSuccess />} />
+          <Route path="/reset-password/password-changed" element={<PasswordChangedSuccess />} />
         </Route>
 
         <Route element={<ProtectedRoutes />}>

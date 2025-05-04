@@ -2,32 +2,31 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-// import { useForgotPasswordMutation } from "../../apis/auth";
+import { useForgotPasswordMutation } from "../../apis/auth";
 
 const ForgotPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // const [forgotPassword] = useForgotPasswordMutation();
+  const [forgotPassword] = useForgotPasswordMutation();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const navigate = useNavigate()
 
   const onSubmit = async (data: { email: string }) => {
-    navigate("/email-sent")
-    // try {
-    //   setIsLoading(true);
-    //   const response = await forgotPassword({ email: data.email, userType: "performer" });
-    //   if (response?.data?.success) {
-    //     toast.success("Password reset link has been sent to your email");
-    //     navigate("email-sent")
-    //   } else {
-    //     toast.error(response?.error?.data?.error || "Failed to send reset password email");
-    //   }
-    // } catch (error) {
-    //   console.error("Failed to send reset password email:", error);
-    //   toast.error("Failed to send reset password email. Please try again.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      setIsLoading(true);
+      const response = await forgotPassword({ email: data.email, userType: "performer" });
+      if (response?.data?.success) {
+        toast.success("Password reset link has been sent to your email");
+        navigate("email-sent")
+      } else {
+        toast.error(response?.error?.data?.error || "Failed to send reset password email");
+      }
+    } catch (error) {
+      console.error("Failed to send reset password email:", error);
+      toast.error("Failed to send reset password email. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
