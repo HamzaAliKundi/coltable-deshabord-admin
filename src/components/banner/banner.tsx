@@ -1,5 +1,9 @@
-import { useState } from "react";
-import { useAddBannerMutation, useGetAllBannersQuery } from "../../apis/banner";
+import { useState, useEffect } from "react";
+import {
+  useAddBannerMutation,
+  useGetAllBannersQuery,
+  useUpdateBannerMutation,
+} from "../../apis/banner";
 import toast from "react-hot-toast";
 
 const Banner = () => {
@@ -23,6 +27,25 @@ const Banner = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
 
+  // Add loading states for each banner type
+  const [loadingStates, setLoadingStates] = useState({
+    home: false,
+    performer: false,
+    venue: false,
+    ad: false,
+    adPerformer: false,
+    adVenue: false,
+  });
+
+  const [bannerIds, setBannerIds] = useState({
+    home: null as string | null,
+    performer: null as string | null,
+    venue: null as string | null,
+    ad: null as string | null,
+    adPerformer: null as string | null,
+    adVenue: null as string | null,
+  });
+
   // States for different banner types
   const [homePageBanners, setHomePageBanners] = useState<string[]>(
     Array(4).fill("")
@@ -39,9 +62,77 @@ const Banner = () => {
     Array(1).fill("")
   );
 
-  const { data: getAllBanners, isLoading: getAllBannersLoading } =
-    useGetAllBannersQuery();
   const [addBanner, { isLoading: addBannerLoading }] = useAddBannerMutation();
+  const [updateBanner, { isLoading: updateBannerLoading }] =
+    useUpdateBannerMutation();
+
+  const { data: homeBannerData } = useGetAllBannersQuery("home");
+  const { data: performerBannerData } = useGetAllBannersQuery("performer");
+  const { data: venueBannerData } = useGetAllBannersQuery("venue");
+
+  // Add this useEffect to handle API response
+  useEffect(() => {
+    if (homeBannerData) {
+      // Home banners
+      const homeBanner = homeBannerData.find(
+        (banner) => banner.type === "home"
+      );
+      if (homeBanner) {
+        setBannerIds((prev) => ({ ...prev, home: homeBanner._id }));
+        setHomePageBanners((prev) => {
+          const newBanners = [...prev];
+          homeBanner.images.forEach((url, index) => {
+            if (index < newBanners.length) {
+              newBanners[index] = url;
+            }
+          });
+          return newBanners;
+        });
+      }
+    }
+  }, [homeBannerData]);
+
+  useEffect(() => {
+    if (venueBannerData) {
+      // venue banners
+      const venueBanner = venueBannerData.find(
+        (banner) => banner.type === "venue"
+      );
+      if (venueBanner) {
+        setBannerIds((prev) => ({ ...prev, venue: venueBanner._id }));
+        setVenueBanners((prev) => {
+          const newBanners = [...prev];
+          venueBanner.images.forEach((url, index) => {
+            if (index < newBanners.length) {
+              newBanners[index] = url;
+            }
+          });
+          return newBanners;
+        });
+      }
+    }
+  }, [venueBannerData]);
+
+  useEffect(() => {
+    if (performerBannerData) {
+      // performer banners
+      const performerBanner = performerBannerData.find(
+        (banner) => banner.type === "performer"
+      );
+      if (performerBanner) {
+        setBannerIds((prev) => ({ ...prev, performer: performerBanner._id }));
+        setPerformerBanners((prev) => {
+          const newBanners = [...prev];
+          performerBanner.images.forEach((url, index) => {
+            if (index < newBanners.length) {
+              newBanners[index] = url;
+            }
+          });
+          return newBanners;
+        });
+      }
+    }
+  }, [performerBannerData]);
 
   const handleImageClick = (index: number, bannerType: string) => {
     setIsModalOpen(true);
@@ -171,24 +262,36 @@ const Banner = () => {
   };
 
   const handleSaveBanners = async (bannerType: string) => {
-    let payload;
+    let images: string[];
+    let payload: {
+      images: string[];
+      title: string;
+      type: string;
+    };
+
     switch (bannerType) {
       case "home":
+        images = homePageBanners.filter((url) => url !== "");
         payload = {
-          images: homePageBanners.filter((url) => url !== ""),
+          images,
           title: "Home Page Banner",
+          type: "home",
         };
         break;
       case "performer":
+        images = performerBanners.filter((url) => url !== "");
         payload = {
-          images: performerBanners.filter((url) => url !== ""),
+          images,
           title: "Performer Profile Page Banner",
+          type: "performer",
         };
         break;
       case "venue":
+        images = venueBanners.filter((url) => url !== "");
         payload = {
-          images: venueBanners.filter((url) => url !== ""),
+          images,
           title: "Venue Profile Page Banner",
+          type: "venue",
         };
         break;
       default:
@@ -196,11 +299,27 @@ const Banner = () => {
     }
 
     try {
-      await addBanner(payload).unwrap();
-      toast.success(`${payload.title} saved successfully!`);
+      setLoadingStates((prev) => ({ ...prev, [bannerType]: true }));
+
+      // Check if we have an existing ID for this banner type
+      const bannerId = bannerIds[bannerType as keyof typeof bannerIds];
+
+      if (bannerId) {
+        // Update existing banner
+        await updateBanner({ id: bannerId, payload }).unwrap();
+        toast.success("Banner updated successfully!");
+      } else {
+        // Create new banner
+        const result = await addBanner(payload).unwrap();
+        // Update our ID state with the new ID
+        setBannerIds((prev) => ({ ...prev, [bannerType]: result._id }));
+        toast.success("Banner created successfully!");
+      }
     } catch (error) {
       console.error("Failed to save banners:", error);
       toast.error("Failed to save banners. Please try again.");
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [bannerType]: false }));
     }
   };
 
@@ -239,7 +358,7 @@ const Banner = () => {
         <img
           src={url}
           alt={`Preview ${index + 1}`}
-          className="w-full h-full object-cover"
+          className="w-[214px] h-[214px] object-cover rounded-lg"
         />
         {!isEditing &&
           !uploadingMediaIndex[
@@ -268,10 +387,10 @@ const Banner = () => {
         </h1>
         <button
           onClick={() => handleSaveBanners("home")}
-          disabled={addBannerLoading}
+          disabled={loadingStates.home}
           className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {addBannerLoading ? "Saving..." : "Save Changes"}
+          {loadingStates.home ? "Saving..." : "Save Changes"}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -279,7 +398,7 @@ const Banner = () => {
           <div
             key={index}
             onClick={() => handleImageClick(index, "home")}
-            className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="w-[214px] h-[214px] bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             {renderMediaPreview(url, index, "home")}
           </div>
@@ -298,10 +417,10 @@ const Banner = () => {
         </h1>
         <button
           onClick={() => handleSaveBanners("performer")}
-          disabled={addBannerLoading}
+          disabled={loadingStates.performer}
           className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {addBannerLoading ? "Saving..." : "Save Changes"}
+          {loadingStates.performer ? "Saving..." : "Save Changes"}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -309,7 +428,7 @@ const Banner = () => {
           <div
             key={index}
             onClick={() => handleImageClick(index, "performer")}
-            className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="w-[214px] h-[214px] bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             {renderMediaPreview(url, index, "performer")}
           </div>
@@ -328,10 +447,10 @@ const Banner = () => {
         </h1>
         <button
           onClick={() => handleSaveBanners("venue")}
-          disabled={addBannerLoading}
+          disabled={loadingStates.venue}
           className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {addBannerLoading ? "Saving..." : "Save Changes"}
+          {loadingStates.venue ? "Saving..." : "Save Changes"}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -339,7 +458,7 @@ const Banner = () => {
           <div
             key={index}
             onClick={() => handleImageClick(index, "venue")}
-            className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="w-[214px] h-[214px] bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             {renderMediaPreview(url, index, "venue")}
           </div>
@@ -484,7 +603,7 @@ const Banner = () => {
                     <img
                       src={currentImage}
                       alt="Current banner"
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-24 h-24 bg-gray-600 rounded-lg flex items-center justify-center">

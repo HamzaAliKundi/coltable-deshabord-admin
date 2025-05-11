@@ -20,8 +20,8 @@ export const bannerApi = createApi({
     }),
 
     getAllBanners: builder.query({
-      query: () => ({
-        url: `/api/admin/banner/get-all-banners`,
+      query: (type) => ({
+        url: `/api/admin/banner/get-all-banners?type=${type}`,
       }),
     }),
 
@@ -39,4 +39,5 @@ export const {
   useAddBannerMutation,
   useGetAllBannersQuery,
   useUpdateBannerMutation,
+  useLazyGetAllBannersQuery
 } = bannerApi;
