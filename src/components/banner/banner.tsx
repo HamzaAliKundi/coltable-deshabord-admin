@@ -358,7 +358,7 @@ const Banner = () => {
         <img
           src={url}
           alt={`Preview ${index + 1}`}
-          className="w-[214px] h-[214px] object-cover rounded-lg"
+          className="w-full h-full object-cover rounded-lg"
         />
         {!isEditing &&
           !uploadingMediaIndex[
@@ -398,7 +398,7 @@ const Banner = () => {
           <div
             key={index}
             onClick={() => handleImageClick(index, "home")}
-            className="w-[214px] h-[214px] bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             {renderMediaPreview(url, index, "home")}
           </div>
@@ -428,7 +428,7 @@ const Banner = () => {
           <div
             key={index}
             onClick={() => handleImageClick(index, "performer")}
-            className="w-[214px] h-[214px] bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             {renderMediaPreview(url, index, "performer")}
           </div>
@@ -458,7 +458,7 @@ const Banner = () => {
           <div
             key={index}
             onClick={() => handleImageClick(index, "venue")}
-            className="w-[214px] h-[214px] bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             {renderMediaPreview(url, index, "venue")}
           </div>
