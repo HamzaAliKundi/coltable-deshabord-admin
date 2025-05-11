@@ -6,6 +6,15 @@ import {
 } from "../../apis/banner";
 import toast from "react-hot-toast";
 
+// Add this skeleton loader component at the top of the file
+const BannerSkeleton = () => (
+  <div className="aspect-video bg-[#212121] rounded-lg animate-pulse">
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-12 h-12 rounded-full bg-[#383838]"></div>
+    </div>
+  </div>
+);
+
 const Banner = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -66,9 +75,10 @@ const Banner = () => {
   const [updateBanner, { isLoading: updateBannerLoading }] =
     useUpdateBannerMutation();
 
-  const { data: homeBannerData } = useGetAllBannersQuery("home");
-  const { data: performerBannerData } = useGetAllBannersQuery("performer");
-  const { data: venueBannerData } = useGetAllBannersQuery("venue");
+  // Add loading states for data fetching
+  const { data: homeBannerData, isLoading: isHomeLoading } = useGetAllBannersQuery("home");
+  const { data: performerBannerData, isLoading: isPerformerLoading } = useGetAllBannersQuery("performer");
+  const { data: venueBannerData, isLoading: isVenueLoading } = useGetAllBannersQuery("venue");
 
   // Add this useEffect to handle API response
   useEffect(() => {
@@ -133,6 +143,13 @@ const Banner = () => {
       }
     }
   }, [performerBannerData]);
+
+  // Add new state to track unsaved changes
+  const [unsavedChanges, setUnsavedChanges] = useState({
+    home: false,
+    performer: false,
+    venue: false,
+  });
 
   const handleImageClick = (index: number, bannerType: string) => {
     setIsModalOpen(true);
@@ -218,16 +235,19 @@ const Banner = () => {
             const newHomeBanners = [...homePageBanners];
             newHomeBanners[index] = data.secure_url;
             setHomePageBanners(newHomeBanners);
+            setUnsavedChanges(prev => ({ ...prev, home: true }));
             break;
           case "performer":
             const newPerformerBanners = [...performerBanners];
             newPerformerBanners[index] = data.secure_url;
             setPerformerBanners(newPerformerBanners);
+            setUnsavedChanges(prev => ({ ...prev, performer: true }));
             break;
           case "venue":
             const newVenueBanners = [...venueBanners];
             newVenueBanners[index] = data.secure_url;
             setVenueBanners(newVenueBanners);
+            setUnsavedChanges(prev => ({ ...prev, venue: true }));
             break;
           case "ad":
             const newAdBanners = [...adBanners];
@@ -315,6 +335,8 @@ const Banner = () => {
         setBannerIds((prev) => ({ ...prev, [bannerType]: result._id }));
         toast.success("Banner created successfully!");
       }
+      // Reset unsaved changes after successful save
+      setUnsavedChanges(prev => ({ ...prev, [bannerType]: false }));
     } catch (error) {
       console.error("Failed to save banners:", error);
       toast.error("Failed to save banners. Please try again.");
@@ -382,27 +404,39 @@ const Banner = () => {
 
       {/* Home Page Banner */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
-          Home Page Banner
-        </h1>
+        <div>
+          <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
+            Home Page Banner
+          </h1>
+          {unsavedChanges.home && (
+            <p className="text-yellow-500 text-sm mt-1">* You have unsaved changes</p>
+          )}
+        </div>
         <button
           onClick={() => handleSaveBanners("home")}
-          disabled={loadingStates.home}
+          disabled={loadingStates.home || !unsavedChanges.home}
           className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loadingStates.home ? "Saving..." : "Save Changes"}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {homePageBanners.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => handleImageClick(index, "home")}
-            className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            {renderMediaPreview(url, index, "home")}
-          </div>
-        ))}
+        {isHomeLoading ? (
+          // Show 4 skeleton loaders while loading
+          Array(4).fill(null).map((_, index) => (
+            <BannerSkeleton key={`home-skeleton-${index}`} />
+          ))
+        ) : (
+          homePageBanners.map((url, index) => (
+            <div
+              key={index}
+              onClick={() => handleImageClick(index, "home")}
+              className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              {renderMediaPreview(url, index, "home")}
+            </div>
+          ))
+        )}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -412,27 +446,38 @@ const Banner = () => {
 
       {/* Performer Profile Page Banner */}
       <div className="flex justify-between items-center mt-8 mb-6">
-        <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
-          performer profile page banner
-        </h1>
+        <div>
+          <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
+            performer profile page banner
+          </h1>
+          {unsavedChanges.performer && (
+            <p className="text-yellow-500 text-sm mt-1">* You have unsaved changes</p>
+          )}
+        </div>
         <button
           onClick={() => handleSaveBanners("performer")}
-          disabled={loadingStates.performer}
+          disabled={loadingStates.performer || !unsavedChanges.performer}
           className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loadingStates.performer ? "Saving..." : "Save Changes"}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {performerBanners.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => handleImageClick(index, "performer")}
-            className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            {renderMediaPreview(url, index, "performer")}
-          </div>
-        ))}
+        {isPerformerLoading ? (
+          Array(4).fill(null).map((_, index) => (
+            <BannerSkeleton key={`performer-skeleton-${index}`} />
+          ))
+        ) : (
+          performerBanners.map((url, index) => (
+            <div
+              key={index}
+              onClick={() => handleImageClick(index, "performer")}
+              className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              {renderMediaPreview(url, index, "performer")}
+            </div>
+          ))
+        )}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -442,27 +487,38 @@ const Banner = () => {
 
       {/* Venue Profile Page Banner */}
       <div className="flex justify-between items-center mt-8 mb-6">
-        <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
-          venue profile page banner
-        </h1>
+        <div>
+          <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
+            venue profile page banner
+          </h1>
+          {unsavedChanges.venue && (
+            <p className="text-yellow-500 text-sm mt-1">* You have unsaved changes</p>
+          )}
+        </div>
         <button
           onClick={() => handleSaveBanners("venue")}
-          disabled={loadingStates.venue}
+          disabled={loadingStates.venue || !unsavedChanges.venue}
           className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loadingStates.venue ? "Saving..." : "Save Changes"}
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {venueBanners.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => handleImageClick(index, "venue")}
-            className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            {renderMediaPreview(url, index, "venue")}
-          </div>
-        ))}
+        {isVenueLoading ? (
+          Array(4).fill(null).map((_, index) => (
+            <BannerSkeleton key={`venue-skeleton-${index}`} />
+          ))
+        ) : (
+          venueBanners.map((url, index) => (
+            <div
+              key={index}
+              onClick={() => handleImageClick(index, "venue")}
+              className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              {renderMediaPreview(url, index, "venue")}
+            </div>
+          ))
+        )}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
