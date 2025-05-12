@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   useAddBannerMutation,
@@ -5,6 +7,11 @@ import {
   useUpdateBannerMutation,
 } from "../../apis/banner";
 import toast from "react-hot-toast";
+import {
+  useAddAdvertisementMutation,
+  useGetAllAdsQuery,
+  useUpdateAdsMutation,
+} from "../../apis/ads";
 
 // Add this skeleton loader component at the top of the file
 const BannerSkeleton = () => (
@@ -55,6 +62,12 @@ const Banner = () => {
     adVenue: null as string | null,
   });
 
+  const [advertisementIds, setAdvertisementIds] = useState({
+    ad: null as string | null,
+    adPerformer: null as string | null,
+    adVenue: null as string | null,
+  });
+
   // States for different banner types
   const [homePageBanners, setHomePageBanners] = useState<string[]>(
     Array(4).fill("")
@@ -75,23 +88,37 @@ const Banner = () => {
   const [updateBanner, { isLoading: updateBannerLoading }] =
     useUpdateBannerMutation();
 
+  const [addAdvertisement, { isLoading: adsLoading }] =
+    useAddAdvertisementMutation();
+  const [updateAd, { isLoading: updateAdsLoading }] = useUpdateAdsMutation();
+
   // Add loading states for data fetching
-  const { data: homeBannerData, isLoading: isHomeLoading } = useGetAllBannersQuery("home");
-  const { data: performerBannerData, isLoading: isPerformerLoading } = useGetAllBannersQuery("performer");
-  const { data: venueBannerData, isLoading: isVenueLoading } = useGetAllBannersQuery("venue");
+  const { data: homeBannerData, isLoading: isHomeLoading } =
+    useGetAllBannersQuery("home");
+  const { data: performerBannerData, isLoading: isPerformerLoading } =
+    useGetAllBannersQuery("performer");
+  const { data: venueBannerData, isLoading: isVenueLoading } =
+    useGetAllBannersQuery("venue");
+
+  const { data: homeAdData, isLoading: isHomeAdDataLoading } =
+    useGetAllAdsQuery("home");
+  const { data: performerAdData, isLoading: isPerformerAdDataLoading } =
+    useGetAllAdsQuery("performer");
+  const { data: venueAdData, isLoading: isVenueAdDataLoading } =
+    useGetAllAdsQuery("venue");
 
   // Add this useEffect to handle API response
   useEffect(() => {
     if (homeBannerData) {
       // Home banners
       const homeBanner = homeBannerData.find(
-        (banner) => banner.type === "home"
+        (banner: any) => banner.type === "home"
       );
       if (homeBanner) {
         setBannerIds((prev) => ({ ...prev, home: homeBanner._id }));
         setHomePageBanners((prev) => {
           const newBanners = [...prev];
-          homeBanner.images.forEach((url, index) => {
+          homeBanner.images.forEach((url: any, index: any) => {
             if (index < newBanners.length) {
               newBanners[index] = url;
             }
@@ -106,13 +133,13 @@ const Banner = () => {
     if (venueBannerData) {
       // venue banners
       const venueBanner = venueBannerData.find(
-        (banner) => banner.type === "venue"
+        (banner: any) => banner.type === "venue"
       );
       if (venueBanner) {
         setBannerIds((prev) => ({ ...prev, venue: venueBanner._id }));
         setVenueBanners((prev) => {
           const newBanners = [...prev];
-          venueBanner.images.forEach((url, index) => {
+          venueBanner.images.forEach((url: any, index: any) => {
             if (index < newBanners.length) {
               newBanners[index] = url;
             }
@@ -127,13 +154,13 @@ const Banner = () => {
     if (performerBannerData) {
       // performer banners
       const performerBanner = performerBannerData.find(
-        (banner) => banner.type === "performer"
+        (banner: any) => banner.type === "performer"
       );
       if (performerBanner) {
         setBannerIds((prev) => ({ ...prev, performer: performerBanner._id }));
         setPerformerBanners((prev) => {
           const newBanners = [...prev];
-          performerBanner.images.forEach((url, index) => {
+          performerBanner.images.forEach((url: any, index: any) => {
             if (index < newBanners.length) {
               newBanners[index] = url;
             }
@@ -144,11 +171,76 @@ const Banner = () => {
     }
   }, [performerBannerData]);
 
+  // Add useEffect for home advertisements
+  useEffect(() => {
+    if (homeAdData) {
+      const homeAd = homeAdData.find((ad: any) => ad.type === "home");
+      if (homeAd) {
+        setAdvertisementIds((prev) => ({ ...prev, ad: homeAd._id }));
+        setAdBanners((prev) => {
+          const newBanners = [...prev];
+          homeAd.images.forEach((url: any, index: any) => {
+            if (index < newBanners.length) {
+              newBanners[index] = url;
+            }
+          });
+          return newBanners;
+        });
+      }
+    }
+  }, [homeAdData]);
+
+  // Add useEffect for performer advertisements
+  useEffect(() => {
+    if (performerAdData) {
+      const performerAd = performerAdData.find(
+        (ad: any) => ad.type === "performer"
+      );
+      if (performerAd) {
+        setAdvertisementIds((prev) => ({
+          ...prev,
+          adPerformer: performerAd._id,
+        }));
+        setAdPerformerBanners((prev) => {
+          const newBanners = [...prev];
+          performerAd.images.forEach((url: any, index: any) => {
+            if (index < newBanners.length) {
+              newBanners[index] = url;
+            }
+          });
+          return newBanners;
+        });
+      }
+    }
+  }, [performerAdData]);
+
+  // Add useEffect for venue advertisements
+  useEffect(() => {
+    if (venueAdData) {
+      const venueAd = venueAdData.find((ad: any) => ad.type === "venue");
+      if (venueAd) {
+        setAdvertisementIds((prev) => ({ ...prev, adVenue: venueAd._id }));
+        setAdVenueBanners((prev) => {
+          const newBanners = [...prev];
+          venueAd.images.forEach((url: any, index: any) => {
+            if (index < newBanners.length) {
+              newBanners[index] = url;
+            }
+          });
+          return newBanners;
+        });
+      }
+    }
+  }, [venueAdData]);
+
   // Add new state to track unsaved changes
   const [unsavedChanges, setUnsavedChanges] = useState({
     home: false,
     performer: false,
     venue: false,
+    ad: false,
+    adPerformer: false,
+    adVenue: false,
   });
 
   const handleImageClick = (index: number, bannerType: string) => {
@@ -235,34 +327,37 @@ const Banner = () => {
             const newHomeBanners = [...homePageBanners];
             newHomeBanners[index] = data.secure_url;
             setHomePageBanners(newHomeBanners);
-            setUnsavedChanges(prev => ({ ...prev, home: true }));
+            setUnsavedChanges((prev) => ({ ...prev, home: true }));
             break;
           case "performer":
             const newPerformerBanners = [...performerBanners];
             newPerformerBanners[index] = data.secure_url;
             setPerformerBanners(newPerformerBanners);
-            setUnsavedChanges(prev => ({ ...prev, performer: true }));
+            setUnsavedChanges((prev) => ({ ...prev, performer: true }));
             break;
           case "venue":
             const newVenueBanners = [...venueBanners];
             newVenueBanners[index] = data.secure_url;
             setVenueBanners(newVenueBanners);
-            setUnsavedChanges(prev => ({ ...prev, venue: true }));
+            setUnsavedChanges((prev) => ({ ...prev, venue: true }));
             break;
           case "ad":
             const newAdBanners = [...adBanners];
             newAdBanners[index] = data.secure_url;
             setAdBanners(newAdBanners);
+            setUnsavedChanges((prev) => ({ ...prev, ad: true }));
             break;
           case "adPerformer":
             const newAdPerformerBanners = [...adPerformerBanners];
             newAdPerformerBanners[index] = data.secure_url;
             setAdPerformerBanners(newAdPerformerBanners);
+            setUnsavedChanges((prev) => ({ ...prev, adPerformer: true }));
             break;
           case "adVenue":
             const newAdVenueBanners = [...adVenueBanners];
             newAdVenueBanners[index] = data.secure_url;
             setAdVenueBanners(newAdVenueBanners);
+            setUnsavedChanges((prev) => ({ ...prev, adVenue: true }));
             break;
         }
 
@@ -336,12 +431,85 @@ const Banner = () => {
         toast.success("Banner created successfully!");
       }
       // Reset unsaved changes after successful save
-      setUnsavedChanges(prev => ({ ...prev, [bannerType]: false }));
+      setUnsavedChanges((prev) => ({ ...prev, [bannerType]: false }));
     } catch (error) {
       console.error("Failed to save banners:", error);
       toast.error("Failed to save banners. Please try again.");
     } finally {
       setLoadingStates((prev) => ({ ...prev, [bannerType]: false }));
+    }
+  };
+
+  const handleSaveAdvertisements = async (adType: string) => {
+    let images: string[];
+    let payload: {
+      images: string[];
+      title: string;
+      type: string;
+    };
+    let adTypeKey: string;
+    let adTypeForApi: string;
+
+    switch (adType) {
+      case "ad":
+        images = adBanners.filter((url) => url !== "");
+        adTypeKey = "ad";
+        adTypeForApi = "home";
+        payload = {
+          images,
+          title: "Advertisement Banner",
+          type: "home",
+        };
+        break;
+      case "adPerformer":
+        images = adPerformerBanners.filter((url) => url !== "");
+        adTypeKey = "adPerformer";
+        adTypeForApi = "performer";
+        payload = {
+          images,
+          title: "Performer Advertisement Banner",
+          type: "performer",
+        };
+        break;
+      case "adVenue":
+        images = adVenueBanners.filter((url) => url !== "");
+        adTypeKey = "adVenue";
+        adTypeForApi = "venue";
+        payload = {
+          images,
+          title: "Venue Advertisement Banner",
+          type: "venue",
+        };
+        break;
+      default:
+        return;
+    }
+
+    try {
+      setLoadingStates((prev) => ({ ...prev, [adType]: true }));
+
+      // Check if we have an existing ID for this advertisement type
+      const adId = advertisementIds[adTypeKey as keyof typeof advertisementIds];
+
+      if (adId) {
+        // Update existing advertisement
+        await updateAd({ id: adId, payload }).unwrap();
+        toast.success("Advertisement updated successfully!");
+      } else {
+        // Create new advertisement
+        const result = await addAdvertisement(payload).unwrap();
+        // Update our ID state with the new ID
+        setAdvertisementIds((prev) => ({ ...prev, [adTypeKey]: result._id }));
+        toast.success("Advertisement created successfully!");
+      }
+
+      // Reset unsaved changes after successful save
+      setUnsavedChanges((prev) => ({ ...prev, [adType]: false }));
+    } catch (error) {
+      console.error("Failed to save advertisement:", error);
+      toast.error("Failed to save advertisement. Please try again.");
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [adType]: false }));
     }
   };
 
@@ -378,7 +546,7 @@ const Banner = () => {
           </div>
         ) : null}
         <img
-          src={url}
+          src={url || "/placeholder.svg"}
           alt={`Preview ${index + 1}`}
           className="w-full h-full object-cover rounded-lg"
         />
@@ -409,7 +577,9 @@ const Banner = () => {
             Home Page Banner
           </h1>
           {unsavedChanges.home && (
-            <p className="text-yellow-500 text-sm mt-1">* You have unsaved changes</p>
+            <p className="text-yellow-500 text-sm mt-1">
+              * You have unsaved changes
+            </p>
           )}
         </div>
         <button
@@ -421,22 +591,22 @@ const Banner = () => {
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {isHomeLoading ? (
-          // Show 4 skeleton loaders while loading
-          Array(4).fill(null).map((_, index) => (
-            <BannerSkeleton key={`home-skeleton-${index}`} />
-          ))
-        ) : (
-          homePageBanners.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index, "home")}
-              className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              {renderMediaPreview(url, index, "home")}
-            </div>
-          ))
-        )}
+        {isHomeLoading
+          ? // Show 4 skeleton loaders while loading
+            Array(4)
+              .fill(null)
+              .map((_, index) => (
+                <BannerSkeleton key={`home-skeleton-${index}`} />
+              ))
+          : homePageBanners.map((url, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(index, "home")}
+                className="aspect-video   bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {renderMediaPreview(url, index, "home")}
+              </div>
+            ))}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -451,7 +621,9 @@ const Banner = () => {
             performer profile page banner
           </h1>
           {unsavedChanges.performer && (
-            <p className="text-yellow-500 text-sm mt-1">* You have unsaved changes</p>
+            <p className="text-yellow-500 text-sm mt-1">
+              * You have unsaved changes
+            </p>
           )}
         </div>
         <button
@@ -463,21 +635,21 @@ const Banner = () => {
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {isPerformerLoading ? (
-          Array(4).fill(null).map((_, index) => (
-            <BannerSkeleton key={`performer-skeleton-${index}`} />
-          ))
-        ) : (
-          performerBanners.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index, "performer")}
-              className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              {renderMediaPreview(url, index, "performer")}
-            </div>
-          ))
-        )}
+        {isPerformerLoading
+          ? Array(4)
+              .fill(null)
+              .map((_, index) => (
+                <BannerSkeleton key={`performer-skeleton-${index}`} />
+              ))
+          : performerBanners.map((url, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(index, "performer")}
+                className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {renderMediaPreview(url, index, "performer")}
+              </div>
+            ))}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -492,7 +664,9 @@ const Banner = () => {
             venue profile page banner
           </h1>
           {unsavedChanges.venue && (
-            <p className="text-yellow-500 text-sm mt-1">* You have unsaved changes</p>
+            <p className="text-yellow-500 text-sm mt-1">
+              * You have unsaved changes
+            </p>
           )}
         </div>
         <button
@@ -504,21 +678,21 @@ const Banner = () => {
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {isVenueLoading ? (
-          Array(4).fill(null).map((_, index) => (
-            <BannerSkeleton key={`venue-skeleton-${index}`} />
-          ))
-        ) : (
-          venueBanners.map((url, index) => (
-            <div
-              key={index}
-              onClick={() => handleImageClick(index, "venue")}
-              className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              {renderMediaPreview(url, index, "venue")}
-            </div>
-          ))
-        )}
+        {isVenueLoading
+          ? Array(4)
+              .fill(null)
+              .map((_, index) => (
+                <BannerSkeleton key={`venue-skeleton-${index}`} />
+              ))
+          : venueBanners.map((url, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(index, "venue")}
+                className="aspect-video bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {renderMediaPreview(url, index, "venue")}
+              </div>
+            ))}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -528,20 +702,40 @@ const Banner = () => {
 
       {/* Advertisement Banner */}
       <div className="flex justify-between items-center mt-8 mb-6">
-        <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
-          advertisement banner
-        </h1>
+        <div>
+          <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
+            advertisement banner
+          </h1>
+          {unsavedChanges.ad && (
+            <p className="text-yellow-500 text-sm mt-1">
+              * You have unsaved changes
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => handleSaveAdvertisements("ad")}
+          disabled={loadingStates.ad || !unsavedChanges.ad}
+          className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loadingStates.ad ? "Saving..." : "Save Changes"}
+        </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {adBanners.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => handleImageClick(index, "ad")}
-            className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            {renderMediaPreview(url, index, "ad")}
-          </div>
-        ))}
+        {isHomeAdDataLoading
+          ? Array(1)
+              .fill(null)
+              .map((_, index) => (
+                <BannerSkeleton key={`ad-skeleton-${index}`} />
+              ))
+          : adBanners.map((url, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(index, "ad")}
+                className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {renderMediaPreview(url, index, "ad")}
+              </div>
+            ))}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -551,20 +745,40 @@ const Banner = () => {
 
       {/* Advertisement Banner Performer Profile */}
       <div className="flex justify-between items-center mt-8 mb-6">
-        <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
-          advertisement banner performer profile
-        </h1>
+        <div>
+          <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
+            advertisement banner performer profile
+          </h1>
+          {unsavedChanges.adPerformer && (
+            <p className="text-yellow-500 text-sm mt-1">
+              * You have unsaved changes
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => handleSaveAdvertisements("adPerformer")}
+          disabled={loadingStates.adPerformer || !unsavedChanges.adPerformer}
+          className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loadingStates.adPerformer ? "Saving..." : "Save Changes"}
+        </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {adPerformerBanners.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => handleImageClick(index, "adPerformer")}
-            className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            {renderMediaPreview(url, index, "adPerformer")}
-          </div>
-        ))}
+        {isPerformerAdDataLoading
+          ? Array(1)
+              .fill(null)
+              .map((_, index) => (
+                <BannerSkeleton key={`adPerformer-skeleton-${index}`} />
+              ))
+          : adPerformerBanners.map((url, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(index, "adPerformer")}
+                className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {renderMediaPreview(url, index, "adPerformer")}
+              </div>
+            ))}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -574,20 +788,40 @@ const Banner = () => {
 
       {/* Advertisement Banner Venue Profile */}
       <div className="flex justify-between items-center mt-8 mb-6">
-        <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
-          advertisement banner venue profile
-        </h1>
+        <div>
+          <h1 className="text-[#FF00A2] text-[20px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle uppercase">
+            advertisement banner venue profile
+          </h1>
+          {unsavedChanges.adVenue && (
+            <p className="text-yellow-500 text-sm mt-1">
+              * You have unsaved changes
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => handleSaveAdvertisements("adVenue")}
+          disabled={loadingStates.adVenue || !unsavedChanges.adVenue}
+          className="px-6 py-2 rounded-full bg-[#FF00A2] text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loadingStates.adVenue ? "Saving..." : "Save Changes"}
+        </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {adVenueBanners.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => handleImageClick(index, "adVenue")}
-            className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            {renderMediaPreview(url, index, "adVenue")}
-          </div>
-        ))}
+        {isVenueAdDataLoading
+          ? Array(1)
+              .fill(null)
+              .map((_, index) => (
+                <BannerSkeleton key={`adVenue-skeleton-${index}`} />
+              ))
+          : adVenueBanners.map((url, index) => (
+              <div
+                key={index}
+                onClick={() => handleImageClick(index, "adVenue")}
+                className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              >
+                {renderMediaPreview(url, index, "adVenue")}
+              </div>
+            ))}
       </div>
       <div className="flex justify-between items-center mb-6 mt-2">
         <h1 className="text-[#878787] text-[14px] font-['Space_Grotesk'] leading-[100%] tracking-[0%] align-middle lowercase">
@@ -657,7 +891,7 @@ const Banner = () => {
 
                   return currentImage ? (
                     <img
-                      src={currentImage}
+                      src={currentImage || "/placeholder.svg"}
                       alt="Current banner"
                       className="w-full h-full object-cover"
                     />
