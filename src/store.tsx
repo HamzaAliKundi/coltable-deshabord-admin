@@ -5,6 +5,7 @@ import { performerApi } from "./apis/performer";
 import { venueApi } from "./apis/venues";
 import { reviewsApi } from "./apis/reviews";
 import { bannerApi } from "./apis/banner";
+import { adsApi } from "./apis/ads";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     [venueApi.reducerPath]: venueApi.reducer,
     [reviewsApi.reducerPath]: reviewsApi.reducer,
     [bannerApi.reducerPath]: bannerApi.reducer,
+    [adsApi.reducerPath]: adsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -22,6 +24,7 @@ export const store = configureStore({
       performerApi.middleware,
       venueApi.middleware,
       reviewsApi.middleware,
-      bannerApi.middleware
+      bannerApi.middleware,
+      adsApi.middleware
     ),
 });
