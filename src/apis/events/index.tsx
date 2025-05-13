@@ -12,34 +12,52 @@ export const eventsApi = createApi({
   }),
   endpoints: (builder) => ({
     getPerformerEvents: builder.query({
-      query: () => "/performer/event/get-all-events"
+      query: () => "/performer/event/get-all-events",
     }),
     getVenueEvents: builder.query({
-      query: () => "/venues/event" 
+      query: () => "/venues/event",
     }),
     getAdminEvents: builder.query({
       query: ({ page = 1, limit = 10, userType }) => ({
         url: "/api/admin/event/get-all-events",
-        params: { page, limit, userType }
-      })
+        params: { page, limit, userType },
+      }),
     }),
     getSingleEvent: builder.query({
-      query: (eventId) => `/api/admin/event/get-single-event/${eventId}`
+      query: (eventId) => `/api/admin/event/get-single-event/${eventId}`,
     }),
     updateEventStatus: builder.mutation({
       query: ({ eventId, status }) => ({
         url: `/api/admin/event/update-event/${eventId}`,
-        method: 'PATCH',
-        body: { status }
-      })
-    })
+        method: "PATCH",
+        body: { status },
+      }),
+    }),
+
+    addEvent: builder.mutation({
+      query: (payload) => ({
+        url: `/api/admin/event/add-event`,
+        method: "POST",
+        body: payload,
+      }),
+    }),
+
+    updateEvent: builder.mutation({
+      query: ({ id, eventData }) => ({
+        url: `/api/admin/event/update-event/${id}`,
+        method: "PATCH",
+        body: {eventData},
+      }),
+    }),
   }),
 });
 
-export const { 
+export const {
   useGetPerformerEventsQuery,
-  useGetVenueEventsQuery, 
+  useGetVenueEventsQuery,
   useGetAdminEventsQuery,
   useGetSingleEventQuery,
-  useUpdateEventStatusMutation
+  useUpdateEventStatusMutation,
+  useAddEventMutation,
+  useUpdateEventMutation,
 } = eventsApi;
