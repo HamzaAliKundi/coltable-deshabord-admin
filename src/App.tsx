@@ -22,6 +22,7 @@ import ForgotPassword from "./pages/auth/forgot-password";
 import PasswordResetEmailSent from "./pages/auth/PasswordResetEmailSent";
 import ResetPassword from "./pages/auth/reset-password";
 import PasswordChangedSuccess from "./pages/auth/PasswordChangedSuccess";
+import CreateEventPage from "./pages/events/create-event";
 
 function App() {
   return (
@@ -40,6 +41,8 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route path="performers" element={<PerformerPage />} /> 
             <Route path="events" element={<EventsPage />} />
+            <Route path="events/create-event" element={<CreateEventPage />} />
+            <Route path="events/create-event/:id" element={<CreateEventPage />} />
             <Route path="events/:id" element={<PerformerEventDetail />} />
             <Route path="events/admin/:id" element={<VenuesDetailPage />} />
             <Route path="venues" element={<VenuesPage />} />  
