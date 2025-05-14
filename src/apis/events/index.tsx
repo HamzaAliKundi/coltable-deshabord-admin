@@ -46,7 +46,7 @@ export const eventsApi = createApi({
       query: ({ id, eventData }) => ({
         url: `/api/admin/event/update-event/${id}`,
         method: "PATCH",
-        body: {eventData},
+        body: eventData,
       }),
     }),
   }),

@@ -21,7 +21,7 @@ interface EventFormData {
   description: string;
   isPrivate: string | boolean;
   logo: string;
-  eventLocation: string;
+  address: string;
 }
 
 const CreateEvent = () => {
@@ -146,7 +146,7 @@ const CreateEvent = () => {
         endTime: formatTime(event.endTime),
         description: event.description,
         isPrivate: event.isPrivate ? "true" : "false",
-        eventLocation: event.address,
+        address: event.address,
       });
 
       if (eventResponse?.event?.image) {
@@ -163,7 +163,7 @@ const CreateEvent = () => {
         endTime: "20:00",
         description: "",
         isPrivate: false,
-        eventLocation: "",
+        address: "",
       });
     }
   }, [eventResponse, id, reset]);
@@ -184,7 +184,7 @@ const CreateEvent = () => {
         ...data,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
-        image: logoUrl,
+        image: logoUrl,      
       };
 
       if (id) {
@@ -290,13 +290,13 @@ const CreateEvent = () => {
               type="text"
               placeholder="Event Location"
               className="w-full h-12 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base placeholder:text-[#878787] focus:outline-none focus:ring-1 focus:ring-pink-500"
-              {...register("eventLocation", {
+              {...register("address", {
                 required: "Event location is required",
               })}
             />
-            {errors.eventLocation && (
+            {errors.address && (
               <span className="text-red-500 text-sm">
-                {errors.eventLocation.message}
+                {errors.address.message}
               </span>
             )}
           </div>
