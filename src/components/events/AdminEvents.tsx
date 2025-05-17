@@ -18,6 +18,7 @@ interface Event {
   audienceType?: string;
   eventCategory?: string;
   specialRequirements?: string;
+  startDate?: string
 }
 
 const AdminEvents = () => {
@@ -84,7 +85,7 @@ const AdminEvents = () => {
                 <p>User Type: {event.userType}</p>
                 {event.audienceType && <p>Audience: {event.audienceType}</p>}
                 {event.eventCategory && <p>Category: {event.eventCategory}</p>}
-                <p>Date: {formatDate(event.startTime)}</p>
+                <p>Date: {formatDate(event.startDate)}</p>
                 <p>Time: {formatTime(event.startTime)}</p>
                 <p className={getStatusColor(event.status)}>
                   Status: {event.status}

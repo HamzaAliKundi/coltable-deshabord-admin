@@ -18,6 +18,7 @@ interface Event {
   image?: string;
   status: string;
   description?: string;
+  startDate?: any;
 }
 
 const PerformerEvents = () => {
@@ -135,8 +136,7 @@ const PerformerEvents = () => {
               <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
                 <p>Host: {event.host}</p>
                 <p>Type: {event.type}</p>
-                <p>Theme: {event.theme}</p>
-                <p>Date: {formatDate(event.startTime)}</p>
+                <p>Date: {formatDate(event.startDate)}</p>
                 <p>Time: {formatTime(event.startTime)}</p>
                 <p className={getStatusColor(event.status)}>
                   Status: {event.status}

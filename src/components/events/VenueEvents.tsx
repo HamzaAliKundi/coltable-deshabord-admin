@@ -20,6 +20,7 @@ interface Event {
   audienceType?: string;
   eventCategory?: string;
   specialRequirements?: string;
+  startDate?: string
 }
 
 const VenueEvents = () => {
@@ -134,10 +135,9 @@ const VenueEvents = () => {
               </h2>
               <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
                 <p>Host: {event.host}</p>
-                <p>Theme: {event.theme}</p>
                 <p>Audience: {event.audienceType || "All"}</p>
                 <p>Category: {event.eventCategory || "N/A"}</p>
-                <p>Date: {formatDate(event.startTime)}</p>
+                <p>Date: {formatDate(event.startDate)}</p>
                 <p>Time: {formatTime(event.startTime)}</p>
                 <p className={getStatusColor(event.status)}>
                   Status: {event.status}

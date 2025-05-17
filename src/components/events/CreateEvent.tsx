@@ -9,6 +9,7 @@ import {
 } from "../../apis/events";
 import CustomSelect from "../../utils/CustomSelect";
 import { eventOptions } from "../../utils/create-event/dropdownData";
+import { Calendar, Clock } from "lucide-react";
 
 interface EventFormData {
   title: string;
@@ -37,6 +38,7 @@ const CreateEvent = () => {
     handleSubmit,
     reset,
     control,
+    watch,
     formState: { errors },
   } = useForm<EventFormData>();
 
@@ -48,6 +50,9 @@ const CreateEvent = () => {
       skip: !id,
     }
   );
+
+  const startTime = watch("startTime");
+  const endTime = watch("endTime");
 
   const handleLogoUpload = async () => {
     const input = document.createElement("input");
@@ -184,7 +189,7 @@ const CreateEvent = () => {
         ...data,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
-        image: logoUrl,      
+        image: logoUrl,
       };
 
       if (id) {
@@ -306,13 +311,23 @@ const CreateEvent = () => {
           <label className="text-white font-space-grotesk text-sm md:text-base">
             Event Start Date*
           </label>
-          <input
-            {...register("startDate", { required: "Start date is required" })}
-            type="date"
-            className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
-          />
+          <div className="relative">
+            <input
+              type="date"
+              className="w-full h-12 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
+              {...register("startDate", {
+                required: "Start date is required",
+              })}
+            />
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <Calendar color="white" size={20} />
+            </div>
+          </div>
+
           {errors.startDate && (
-            <span className="text-red-500">{errors.startDate.message}</span>
+            <span className="text-red-500 text-sm">
+              {errors.startDate.message}
+            </span>
           )}
         </div>
 
@@ -321,30 +336,60 @@ const CreateEvent = () => {
             <label className="text-white font-space-grotesk text-sm md:text-base">
               Event Start Time*
             </label>
-            <input
-              {...register("startTime", { required: "Start time is required" })}
-              type="time"
-              className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
-            />
+
+            <div className="relative">
+              <input
+                type="time"
+                className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
+                {...register("startTime", {
+                  required: "Start time is required",
+                  validate: (value) => {
+                    if (endTime && value > endTime) {
+                      return "Start time cannot be after end time";
+                    }
+                    return true;
+                  },
+                })}
+              />
+
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <Clock color="white" size={20} />
+              </div>
+            </div>
             {errors.startTime && (
-              <span className="text-red-500">{errors.startTime.message}</span>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.startTime.message}
+              </p>
             )}
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-white font-space-grotesk text-sm md:text-base">
               Event End Time*
             </label>
-            <input
-              {...register("endTime", {
-                required: "End time is required",
-                validate: (value, { startTime }) =>
-                  value > startTime || "End time must be after start time",
-              })}
-              type="time"
-              className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
-            />
+            <div className="relative">
+              <input
+                type="time"
+                className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
+                {...register("endTime", {
+                  required: "End time is required",
+                  validate: (value) => {
+                    if (startTime && value < startTime) {
+                      return "End time cannot be before start time";
+                    }
+
+                    return true;
+                  },
+                })}
+              />
+
+              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <Clock color="white" size={20} />
+              </div>
+            </div>
             {errors.endTime && (
-              <span className="text-red-500">{errors.endTime.message}</span>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.endTime.message}
+              </p>
             )}
           </div>
         </div>
