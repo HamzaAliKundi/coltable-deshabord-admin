@@ -72,10 +72,8 @@ const PerformerEventDetail = () => {
                 <div>
                   <p className="text-sm">Host: {event.host}</p>
                   <p className="text-sm">Type: {event.type}</p>
-                  {event.theme && (
-                    <p className="text-sm">Theme: {event.theme}</p>
-                  )}
-                  <p className="text-sm">Date: {formatDate(event.startTime)}</p>
+
+                  <p className="text-sm">Date: {formatDate(event.startDate)}</p>
                   <p className="text-sm">
                     Time: {formatTime(event.startTime)} -{" "}
                     {formatTime(event.endTime)}
