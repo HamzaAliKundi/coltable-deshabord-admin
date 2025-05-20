@@ -51,9 +51,6 @@ const CreateEvent = () => {
     }
   );
 
-  const startTime = watch("startTime");
-  const endTime = watch("endTime");
-
   const handleLogoUpload = async () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -343,12 +340,6 @@ const CreateEvent = () => {
                 className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
                 {...register("startTime", {
                   required: "Start time is required",
-                  validate: (value) => {
-                    if (endTime && value > endTime) {
-                      return "Start time cannot be after end time";
-                    }
-                    return true;
-                  },
                 })}
               />
 
@@ -372,13 +363,6 @@ const CreateEvent = () => {
                 className="w-full h-10 bg-[#0D0D0D] rounded-lg px-3 text-white font-space-grotesk text-base focus:outline-none focus:ring-1 focus:ring-pink-500"
                 {...register("endTime", {
                   required: "End time is required",
-                  validate: (value) => {
-                    if (startTime && value < startTime) {
-                      return "End time cannot be before start time";
-                    }
-
-                    return true;
-                  },
                 })}
               />
 
