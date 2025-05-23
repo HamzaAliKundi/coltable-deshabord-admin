@@ -18,7 +18,7 @@ interface Event {
   audienceType?: string;
   eventCategory?: string;
   specialRequirements?: string;
-  startDate?: string
+  startDate?: string;
 }
 
 const AdminEvents = () => {
@@ -27,14 +27,27 @@ const AdminEvents = () => {
     data: events,
     isLoading,
     isFetching,
-  } = useGetAdminEventsQuery({
-    page: currentPage,
-    limit: 4,
-    userType: "admin",
-  },
-  {
-      refetchOnMountOrArgChange: true
-    });
+  } = useGetAdminEventsQuery(
+    {
+      page: currentPage,
+      limit: 4,
+      userType: "admin",
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const formatEventType = (type: any) => {
+    const types = {
+      "drag-show": "Drag Show",
+      "drag-brunch": "Drag Brunch",
+      "drag-bingo": "Drag Bingo",
+      "drag-trivia": "Drag Trivia",
+      other: "Other",
+    };
+    return types[type] || "Other";
+  };
 
   const getStatusColor = (status: string) => {
     if (status === "approved") return "text-[#FF00A2]";
@@ -81,7 +94,7 @@ const AdminEvents = () => {
               </h2>
               <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
                 <p>Host: {event.host}</p>
-                <p>Type: {event.type}</p>
+                <p>Type: {formatEventType(event?.type)}</p>
                 <p>User Type: {event.userType}</p>
                 {event.audienceType && <p>Audience: {event.audienceType}</p>}
                 {event.eventCategory && <p>Category: {event.eventCategory}</p>}

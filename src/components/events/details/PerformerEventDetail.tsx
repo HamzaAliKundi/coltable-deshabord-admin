@@ -3,6 +3,14 @@ import { useParams } from "react-router-dom";
 import { useGetSingleEventQuery } from "../../../apis/events";
 import { toast } from "react-hot-toast";
 
+export const eventOptions = [
+  { value: "drag-show", label: "Drag Show" },
+  { value: "drag-brunch", label: "Drag Brunch" },
+  { value: "drag-bingo", label: "Drag Bingo" },
+  { value: "drag-trivia", label: "Drag Trivia" },
+  { value: "other", label: "Other" },
+];
+
 interface Event {
   _id: string;
   user: string;
@@ -71,7 +79,11 @@ const PerformerEventDetail = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-400">
                 <div>
                   <p className="text-sm">Host: {event.host}</p>
-                  <p className="text-sm">Type: {event.type}</p>
+                  <p className="text-sm">
+                    Type:{" "}
+                    {eventOptions.find((option) => option.value === event.type)
+                      ?.label ?? "Other"}
+                  </p>
 
                   <p className="text-sm">Date: {formatDate(event.startDate)}</p>
                   <p className="text-sm">

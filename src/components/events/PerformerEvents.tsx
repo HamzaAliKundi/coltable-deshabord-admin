@@ -44,6 +44,17 @@ const PerformerEvents = () => {
     }
   );
 
+  const formatEventType = (type: any) => {
+    const types = {
+      "drag-show": "Drag Show",
+      "drag-brunch": "Drag Brunch",
+      "drag-bingo": "Drag Bingo",
+      "drag-trivia": "Drag Trivia",
+      other: "Other",
+    };
+    return types[type] || "Other";
+  };
+
   const [updateEventStatus] = useUpdateEventStatusMutation();
 
   const handleStatusUpdate = async (
@@ -135,7 +146,7 @@ const PerformerEvents = () => {
               </h2>
               <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
                 <p>Host: {event.host}</p>
-                <p>Type: {event.type}</p>
+                <p>Type: {formatEventType(event?.type)}</p>
                 <p>Date: {formatDate(event.startDate)}</p>
                 <p>Time: {formatTime(event.startTime)}</p>
                 <p className={getStatusColor(event.status)}>
