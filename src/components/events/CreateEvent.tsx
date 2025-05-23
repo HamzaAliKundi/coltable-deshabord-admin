@@ -196,7 +196,7 @@ const CreateEvent = () => {
       } else {
         await createEvent(eventData).unwrap();
         toast.success("Event created successfully!");
-        navigate(`/events`);
+        // navigate(`/events`);
       }
     } catch (error) {
       console.error("Error saving event:", error);
