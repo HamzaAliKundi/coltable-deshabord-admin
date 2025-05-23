@@ -282,7 +282,7 @@ const Performer = ({
                 <img
                   src={user?.profilePhoto}
                   alt={user.firstName}
-                  className="w-full h-[120px] sm:h-[150px] rounded-[8px] object-cover"
+                  className="w-full h-[120px] sm:h-[150px] rounded-[8px] object-cover object-top"
                 />
                 <div className="w-1/2 -bottom-0.5 absolute left-12 h-[2px] sm:h-[3px] bg-[#FF00A2] rounded-[10px]"></div>
                 <div className="absolute bottom-[-20px] sm:bottom-[-25px] left-[20px] sm:left-[25px]">
