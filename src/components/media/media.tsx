@@ -107,7 +107,10 @@ const Media = () => {
             </div>
           ))
         ) : (
-          <div className="col-span-full text-center text-white">No images found.</div>
+          <div className="col-span-full flex flex-col items-center justify-center py-12">
+            <span className="text-white text-lg font-semibold mb-2">No images found.</span>
+            <span className="text-[#FF00A2] text-sm">There are currently no images to display.</span>
+          </div>
         )}
       </div>
 
@@ -174,14 +177,16 @@ const Media = () => {
           </div>
         </div>
       )}
-      <div className="mt-12">
-        <Pagination
-          currentPage={data?.page || 1}
-          totalPages={data?.totalPages || 1}
-          isLoading={isLoading}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      {data && data.docs && data.docs.length > 0 && (
+        <div className="mt-12">
+          <Pagination
+            currentPage={data?.page || 1}
+            totalPages={data?.totalPages || 1}
+            isLoading={isLoading}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
     </div>
   );
 };
