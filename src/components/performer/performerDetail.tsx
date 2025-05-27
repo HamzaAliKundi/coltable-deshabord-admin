@@ -60,7 +60,10 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
               {hasImages && (
                 <button 
                   className={`py-2 px-4 ${activeTab === 'images' ? 'text-[#FF00A2] border-b-2 border-[#FF00A2]' : 'text-gray-400'}`}
-                  onClick={() => setActiveTab('images')}
+                  onClick={() => {
+                    setActiveTab('images');
+                    setMainImageIndex(0);
+                  }}
                 >
                   Images
                 </button>
@@ -68,7 +71,10 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
               {hasVideos && (
                 <button 
                   className={`py-2 px-4 ${activeTab === 'videos' ? 'text-[#FF00A2] border-b-2 border-[#FF00A2]' : 'text-gray-400'}`}
-                  onClick={() => setActiveTab('videos')}
+                  onClick={() => {
+                    setActiveTab('videos');
+                    setMainVideoIndex(0);
+                  }}
                 >
                   Videos
                 </button>
@@ -82,13 +88,13 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
                   <img
                     src={imageList[mainImageIndex] || performer.profilePhoto || "/events/event.svg"}
                     alt={performer.name}
-                    className="w-full h-64 object-cover rounded-lg"
+                    className="w-full h-64 object-cover object-top rounded-lg"
                   />
                 ) : (
                   <img
                     src={performer.profilePhoto || "/events/event.svg"}
                     alt={performer.name}
-                    className="w-full h-64 object-cover rounded-lg"
+                    className="w-full h-64 object-cover object-top rounded-lg"
                   />
                 )
               )}
