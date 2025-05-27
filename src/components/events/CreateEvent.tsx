@@ -32,6 +32,8 @@ const CreateEvent = () => {
   const [logoPreview, setLogoPreview] = useState("");
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoUrl, setLogoUrl] = useState("");
+  const [logoError, setLogoError] = useState("");
+  const [isLogoError, setIsLogoError] = useState(false);
 
   const {
     register,
@@ -172,6 +174,8 @@ const CreateEvent = () => {
 
   const onSubmit = async (data: EventFormData) => {
     if (!logoUrl.trim()) {
+      setIsLogoError(true);
+      setLogoError("Flier is required");
       return;
     }
 
@@ -200,7 +204,7 @@ const CreateEvent = () => {
       } else {
         await createEvent(eventData).unwrap();
         toast.success("Event created successfully!");
-        // navigate(`/events`);
+        navigate(`/events`);
       }
     } catch (error) {
       console.error("Error saving event:", error);
@@ -457,10 +461,8 @@ const CreateEvent = () => {
               </>
             )}
           </div>
-          {!logoUrl.trim() && (
-            <span className="text-red-500 text-sm">
-              Event flier is required
-            </span>
+          {isLogoError && (
+            <span className="text-red-500 text-sm">{logoError}</span>
           )}
         </div>
 
