@@ -54,6 +54,10 @@ const Media = () => {
     setCurrentPage(page);
   };
 
+  const isVideo = (url: string) => {
+    return url.match(/\.(mp4|webm|ogg)$/i);
+  };
+
   return (
     <div className="bg-black p-4 md:p-8 w-full mb-32">
       <div className="flex justify-between items-center mb-6 md:mb-8">
@@ -98,12 +102,24 @@ const Media = () => {
               onClick={() => handleImageClick(img)}
               className="aspect-square bg-[#212121] rounded-lg flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <img
-                src={img.image}
-                alt={img._id}
-                className="object-cover w-full h-full rounded-lg"
-                style={{ maxHeight: "100%", maxWidth: "100%" }}
-              />
+              {isVideo(img.image) ? (
+                <video
+                  src={img.image}
+                  className="object-cover w-full h-full rounded-lg"
+                  style={{ maxHeight: "100%", maxWidth: "100%" }}
+                  controls={false}
+                  muted
+                  loop
+                  autoPlay
+                />
+              ) : (
+                <img
+                  src={img.image}
+                  alt={img._id}
+                  className="object-cover w-full h-full rounded-lg"
+                  style={{ maxHeight: "100%", maxWidth: "100%" }}
+                />
+              )}
             </div>
           ))
         ) : (
@@ -142,11 +158,21 @@ const Media = () => {
 
             {/* Image container with padding */}
             <div className="mb-8 aspect-video bg-black rounded-lg flex items-center justify-center">
-              <img
-                src={selectedImage.image}
-                alt={selectedImage._id}
-                className="object-contain max-h-60 rounded-lg"
-              />
+              {isVideo(selectedImage.image) ? (
+                <video
+                  src={selectedImage.image}
+                  className="object-contain max-h-60 rounded-lg"
+                  controls
+                  autoPlay
+                  loop
+                />
+              ) : (
+                <img
+                  src={selectedImage.image}
+                  alt={selectedImage._id}
+                  className="object-contain max-h-60 rounded-lg"
+                />
+              )}
             </div>
 
             {/* Action buttons */}
