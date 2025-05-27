@@ -12,6 +12,20 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
   const [mainVideoIndex, setMainVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
 
+  const isVideo = (url: string) => {
+    return url.match(/\.(mp4|webm|ogg)$/i);
+  };
+
+  // Separate images and videos from venue.images (only after venue is defined)
+  const imageList = venue.images ? venue.images.filter((url: string) => !isVideo(url)) : [];
+  const videoList = venue.images ? venue.images.filter((url: string) => isVideo(url)) : [];
+
+  const hasImages = imageList.length > 0;
+  const hasVideos = (venue.videos && venue.videos.length > 0) || videoList.length > 0;
+
+  // For videos tab, combine venue.videos and videoList
+  const allVideos = [...(venue.videos || []), ...videoList];
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -36,9 +50,6 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
     setMainVideoIndex(index);
   };
 
-  const hasImages = venue.images && venue.images.length > 0;
-  const hasVideos = venue.videos && venue.videos.length > 0;
-
   return (
     <div className="bg-black p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -49,7 +60,10 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
               {hasImages && (
                 <button 
                   className={`py-2 px-4 ${activeTab === 'images' ? 'text-[#FF00A2] border-b-2 border-[#FF00A2]' : 'text-gray-400'}`}
-                  onClick={() => setActiveTab('images')}
+                  onClick={() => {
+                    setActiveTab('images');
+                    setMainImageIndex(0);
+                  }}
                 >
                   Images
                 </button>
@@ -57,7 +71,10 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
               {hasVideos && (
                 <button 
                   className={`py-2 px-4 ${activeTab === 'videos' ? 'text-[#FF00A2] border-b-2 border-[#FF00A2]' : 'text-gray-400'}`}
-                  onClick={() => setActiveTab('videos')}
+                  onClick={() => {
+                    setActiveTab('videos');
+                    setMainVideoIndex(0);
+                  }}
                 >
                   Videos
                 </button>
@@ -67,52 +84,63 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
             {/* Main Media Display */}
             <div className="mb-4">
               {activeTab === 'images' && (
-                <img 
-                  src={venue.images?.[mainImageIndex] || venue.logo || "/events/event.svg"} 
-                  alt={venue.name} 
-                  className="w-full h-64 object-cover rounded-lg"
-                />
+                imageList[mainImageIndex] ? (
+                  <img 
+                    src={imageList[mainImageIndex] || venue.logo || "/events/event.svg"} 
+                    alt={venue.name} 
+                    className="w-full h-64 object-cover object-top rounded-lg"
+                  />
+                ) : (
+                  <img 
+                    src={venue.logo || "/events/event.svg"} 
+                    alt={venue.name} 
+                    className="w-full h-64 object-cover object-top rounded-lg"
+                  />
+                )
               )}
-              {activeTab === 'videos' && (
+              {activeTab === 'videos' && allVideos[mainVideoIndex] && (
                 <video 
-                  src={venue.videos?.[mainVideoIndex]} 
+                  src={allVideos[mainVideoIndex]} 
                   controls
-                  className="w-full h-64 object-cover rounded-lg"
+                  className="w-full h-64 object-contain rounded-lg bg-black"
                 />
               )}
             </div>
 
             {/* Image Thumbnails */}
-            {activeTab === 'images' && venue.images && venue.images.length > 1 && (
+            {activeTab === 'images' && imageList.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {venue.images.map((image: string, index: number) => (
+                {imageList.map((image: string, index: number) => (
                   <img
                     key={index}
                     src={image}
                     alt={`${venue.name} - Image ${index + 1}`}
-                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer transition-opacity ${
+                    className={`w-20 h-20 object-cover object-top rounded-lg cursor-pointer transition-opacity ${
                       index === mainImageIndex ? 'ring-2 ring-[#FF00A2]' : 'opacity-70 hover:opacity-100'
                     }`}
-                    onClick={() => handleImageClick(index)}
+                    onClick={() => setMainImageIndex(index)}
                   />
                 ))}
               </div>
             )}
 
             {/* Video Thumbnails */}
-            {activeTab === 'videos' && venue.videos && venue.videos.length > 1 && (
+            {activeTab === 'videos' && allVideos.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {venue.videos.map((video: string, index: number) => (
+                {allVideos.map((video: string, index: number) => (
                   <div 
                     key={index}
                     className={`relative w-20 h-20 rounded-lg cursor-pointer overflow-hidden ${
                       index === mainVideoIndex ? 'ring-2 ring-[#FF00A2]' : 'opacity-70 hover:opacity-100'
                     }`}
-                    onClick={() => handleVideoClick(index)}
+                    onClick={() => setMainVideoIndex(index)}
                   >
                     <video 
                       src={video} 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain rounded-lg bg-black"
+                      muted
+                      loop
+                      autoPlay
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
                       <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
