@@ -16,16 +16,6 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
     return url.match(/\.(mp4|webm|ogg)$/i);
   };
 
-  // Separate images and videos from venue.images (only after venue is defined)
-  const imageList = venue.images ? venue.images.filter((url: string) => !isVideo(url)) : [];
-  const videoList = venue.images ? venue.images.filter((url: string) => isVideo(url)) : [];
-
-  const hasImages = imageList.length > 0;
-  const hasVideos = (venue.videos && venue.videos.length > 0) || videoList.length > 0;
-
-  // For videos tab, combine venue.videos and videoList
-  const allVideos = [...(venue.videos || []), ...videoList];
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -41,6 +31,16 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
       </div>
     );
   }
+
+  // Separate images and videos from venue.images (only after venue is defined)
+  const imageList = venue.images ? venue.images.filter((url: string) => !isVideo(url)) : [];
+  const videoList = venue.images ? venue.images.filter((url: string) => isVideo(url)) : [];
+
+  const hasImages = imageList.length > 0;
+  const hasVideos = (venue.videos && venue.videos.length > 0) || videoList.length > 0;
+
+  // For videos tab, combine venue.videos and videoList
+  const allVideos = [...(venue.videos || []), ...videoList];
 
   const handleImageClick = (index: number) => {
     setMainImageIndex(index);
