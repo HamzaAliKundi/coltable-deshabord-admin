@@ -171,6 +171,10 @@ const CreateEvent = () => {
   }, [eventResponse, id, reset]);
 
   const onSubmit = async (data: EventFormData) => {
+    if (!logoUrl.trim()) {
+      return;
+    }
+
     try {
       const startDate = new Date(data.startDate);
       const startTime = new Date(startDate);
@@ -448,11 +452,16 @@ const CreateEvent = () => {
                   Of [Specify Dimensions, E.G., 500x500px]
                 </p>
                 <div className="bg-[#FF00A2] text-black rounded-lg px-8 py-3 inline-block font-['Space_Grotesk'] text-[16px] leading-[100%] tracking-[0%] text-center capitalize">
-                Upload Event Flier
+                  Upload Event Flier
                 </div>
               </>
             )}
           </div>
+          {!logoUrl.trim() && (
+            <span className="text-red-500 text-sm">
+              Event flier is required
+            </span>
+          )}
         </div>
 
         <button
