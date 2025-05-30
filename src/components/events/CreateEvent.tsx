@@ -192,6 +192,7 @@ const CreateEvent = () => {
 
       const eventData = {
         ...data,
+        startDate: startDate.toISOString(),
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         image: logoUrl,
