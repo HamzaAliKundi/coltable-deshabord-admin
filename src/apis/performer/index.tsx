@@ -12,35 +12,41 @@ export const performerApi = createApi({
   }),
   endpoints: (builder) => ({
     getAllPerformers: builder.query({
-      query: ({page = 1, limit = 10, address, status}) => {
+      query: ({ page = 1, limit = 10, address, status }) => {
         let url = `/api/admin/performer/get-all-performers?limit=${limit}&page=${page}`;
-        if (address && address !== 'all') url += `&address=${encodeURIComponent(address)}`;
-        if (status && status !== 'all') url += `&status=${status}`;
+        if (address && address !== "all")
+          url += `&address=${encodeURIComponent(address)}`;
+        if (status && status !== "all") url += `&status=${status}`;
         return url;
-      }
+      },
     }),
     getSinglePerformer: builder.query({
-      query: (id) => `/api/admin/performer/get-single-performer/${id}`
+      query: (id) => `/api/admin/performer/get-single-performer/${id}`,
     }),
     updatePerformerStatus: builder.mutation({
       query: ({ id, status }) => ({
         url: `/api/admin/performer/update-performer/${id}`,
-        method: 'PATCH',
-        body: { status }
-      })
+        method: "PATCH",
+        body: { status },
+      }),
     }),
     deletePerformer: builder.mutation({
       query: (id) => ({
         url: `/api/admin/performer/delete-performer/${id}`,
-        method: 'DELETE'
-      })
-    })
+        method: "DELETE",
+      }),
+    }),
+
+    getPerformers: builder.query({
+      query: () => "/api/admin/performer/get-performers",
+    }),
   }),
 });
 
-export const { 
-  useGetAllPerformersQuery, 
+export const {
+  useGetAllPerformersQuery,
   useGetSinglePerformerQuery,
   useUpdatePerformerStatusMutation,
-  useDeletePerformerMutation 
+  useDeletePerformerMutation,
+  useGetPerformersQuery,
 } = performerApi;
