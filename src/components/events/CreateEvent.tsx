@@ -10,6 +10,9 @@ import {
 import CustomSelect from "../../utils/CustomSelect";
 import { eventOptions } from "../../utils/create-event/dropdownData";
 import { Calendar, Clock } from "lucide-react";
+import { useGetPerformersQuery } from "../../apis/performer";
+import Select from 'react-select';
+
 
 interface EventFormData {
   title: string;
@@ -23,6 +26,7 @@ interface EventFormData {
   isPrivate: string | boolean;
   logo: string;
   address: string;
+  performers?: Array<{ value: string; label: string }>;
 }
 
 const CreateEvent = () => {
@@ -43,7 +47,7 @@ const CreateEvent = () => {
     watch,
     formState: { errors },
   } = useForm<EventFormData>();
-
+  const { data: performers } = useGetPerformersQuery();
   const [createEvent, { isLoading: isCreating }] = useAddEventMutation();
   const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
   const { data: eventResponse, isLoading: isFetching } = useGetSingleEventQuery(
@@ -402,6 +406,96 @@ const CreateEvent = () => {
           {errors.description && (
             <span className="text-red-500">{errors.description.message}</span>
           )}
+        </div>
+
+         <div className="flex flex-col gap-2">
+          <label className="text-white font-space-grotesk text-sm md:text-base">
+            Select Performer(s)
+          </label>
+          <Controller
+            name="performers"
+            control={control}
+            render={({ field }) => (
+              <Select
+                {...field}
+                isMulti
+                isDisabled={false}
+                closeMenuOnSelect={false}
+                options={
+                  performers?.map((performer: any) => ({
+                    value: performer._id,
+                    label:
+                      performer.fullDragName ||
+                      performer.name ||
+                      performer.firstName ||
+                      performer.email,
+                  })) || []
+                }
+                className="w-full"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    minHeight: "46px",
+                    background: "#0D0D0D",
+                    border: "1px solid transparent",
+                    borderRadius: "10px",
+                    boxShadow: "none",
+                    "&:hover": {
+                      border: "1px solid #383838",
+                    },
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    background: "#1D1D1D",
+                    border: "1px solid #383838",
+                    borderRadius: "4px",
+                  }),
+                  option: (base, state) => ({
+                    ...base,
+                    background: state.isFocused ? "#383838" : "#1D1D1D",
+                    color: "#fff",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    "&::before": {
+                      content: '""',
+                      display: "block",
+                      width: "16px",
+                      height: "16px",
+                      border: "2px solid #fff",
+                      borderRadius: "50%",
+                      backgroundColor: state.isSelected
+                        ? "#FF00A2"
+                        : "transparent",
+                    },
+                  }),
+                  multiValue: (base) => ({
+                    ...base,
+                    background: "#383838",
+                    borderRadius: "4px",
+                  }),
+                  multiValueLabel: (base) => ({
+                    ...base,
+                    color: "#fff",
+                  }),
+                  multiValueRemove: (base) => ({
+                    ...base,
+                    color: "#fff",
+                    ":hover": {
+                      background: "#4a4a4a",
+                      borderRadius: "0 4px 4px 0",
+                    },
+                  }),
+                  input: (base) => ({
+                    ...base,
+                    color: "#fff",
+                  }),
+                }}
+                placeholder="Select performers"
+              />
+            )}
+          />
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 md:gap-6">
