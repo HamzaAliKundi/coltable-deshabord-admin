@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetSingleEventQuery } from "../../../apis/events";
 import { toast } from "react-hot-toast";
+import moment from "moment-timezone";
 
 export const eventOptions = [
   { value: "drag-show", label: "Drag Show" },
@@ -37,13 +38,11 @@ const PerformerEventDetail = () => {
   const event = response?.event;
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return moment.tz(dateString, "America/New_York").format("MM/DD/YYYY");
   };
 
   const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return moment.tz(dateString, "America/New_York").format("hh:mm A");
   };
 
   if (isLoading) {
@@ -70,7 +69,7 @@ const PerformerEventDetail = () => {
             <img
               src={event.image || "/events/event.svg"}
               alt={event.title}
-              className="w-full md:w-1/3 h-48 md:h-64 rounded-[8px] object-cover"
+              className="w-full md:w-1/3 h-48 md:h-64 rounded-[8px] object-contain"
             />
             <div className="flex-1">
               <h1 className="text-white font-['Space_Grotesk'] font-bold text-2xl md:text-3xl mb-4 capitalize">
