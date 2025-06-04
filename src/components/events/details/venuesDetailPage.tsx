@@ -107,10 +107,7 @@ const EventRequestDetail = () => {
               <span className="font-medium">Type:</span>{" "}
               {formatEventType(getEventsByVenuesById?.event?.type)}
             </li>
-            <li>
-              <span className="font-medium">Category:</span>{" "}
-              {getEventsByVenuesById?.event?.eventCategory || "N/A"}
-            </li>
+         
 
             <li>
               <span className="font-medium">Audience:</span>{" "}
