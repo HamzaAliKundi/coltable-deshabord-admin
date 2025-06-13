@@ -7,18 +7,21 @@ import {
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 
+// Define event types for better type safety
+type EventType = "drag-show" | "drag-brunch" | "drag-bingo" | "drag-trivia" | "other";
+
 interface Event {
   _id: string;
   title: string;
   host: string;
-  type: string;
+  type: EventType;
   theme: string;
   startTime: string;
   endTime: string;
   image?: string;
   status: string;
   description?: string;
-  startDate?: any;
+  startDate: string; // Make this required
 }
 
 const PerformerEvents = () => {
@@ -44,8 +47,9 @@ const PerformerEvents = () => {
     }
   );
 
-  const formatEventType = (type: any) => {
-    const types = {
+  // Fix TypeScript error in formatEventType
+  const formatEventType = (type: EventType) => {
+    const types: Record<EventType, string> = {
       "drag-show": "Drag Show",
       "drag-brunch": "Drag Brunch",
       "drag-bingo": "Drag Bingo",
@@ -81,14 +85,57 @@ const PerformerEvents = () => {
     return "text-[#FF00A2]";
   };
 
-  const formatDate = (dateString: string) => {
+  // Safe timezone handling for dates
+  const getLocalDateSafe = (dateString: string) => {
+    if (!dateString) return new Date();
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    // Handle midnight UTC case
+    if (
+      date.getUTCHours() === 0 &&
+      date.getUTCMinutes() === 0 &&
+      date.getUTCSeconds() === 0
+    ) {
+      const localDate = new Date(date);
+      const localDay = localDate.getDate();
+      const utcDay = date.getUTCDate();
+      if (localDay < utcDay) {
+        localDate.setDate(localDate.getDate() + 1);
+        return localDate;
+      }
+    }
+    // Always add one day to fix timezone offset
+    const adjustedDate = new Date(date);
+    adjustedDate.setDate(date.getDate() + 1);
+    return adjustedDate;
   };
 
+  // Modified formatDate function with proper typing
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Modified formatTime function with proper typing
   const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleTimeString(undefined, {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short'
+    });
+  };
+
+  // Add timezone info function
+  const getTimezoneInfo = () => {
+    return new Date().toLocaleTimeString(undefined, { timeZoneName: 'short' }).split(' ')[2];
   };
 
   const getButtonStyles = (
@@ -146,9 +193,9 @@ const PerformerEvents = () => {
               </h2>
               <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
                 <p>Host: {event.host}</p>
-                <p>Type: {formatEventType(event?.type)}</p>
-                <p>Date: {formatDate(event.startDate)}</p>
-                <p>Time: {formatTime(event.startTime)}</p>
+                <p>Type: {formatEventType(event.type)}</p>
+                <p>Date: {event.startDate ? formatDate(event.startDate) : "N/A"}</p>
+                <p>Time: {event.startTime ? formatTime(event.startTime) : "N/A"}</p>
                 <p className={getStatusColor(event.status)}>
                   Status: {event.status}
                 </p>

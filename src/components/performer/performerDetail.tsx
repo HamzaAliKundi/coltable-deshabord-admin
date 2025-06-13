@@ -12,6 +12,47 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
   const [mainVideoIndex, setMainVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
 
+  // Add timezone-safe date handling function
+  const getLocalDateSafe = (dateString: string) => {
+    if (!dateString) return new Date();
+    const date = new Date(dateString);
+    // Handle midnight UTC case
+    if (
+      date.getUTCHours() === 0 &&
+      date.getUTCMinutes() === 0 &&
+      date.getUTCSeconds() === 0
+    ) {
+      const localDate = new Date(date);
+      const localDay = localDate.getDate();
+      const utcDay = date.getUTCDate();
+      if (localDay < utcDay) {
+        localDate.setDate(localDate.getDate() + 1);
+        return localDate;
+      }
+    }
+    // Always add one day to fix timezone offset
+    const adjustedDate = new Date(date);
+    adjustedDate.setDate(date.getDate() + 1);
+    return adjustedDate;
+  };
+
+  // Add formatted date function
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Add timezone info function
+  const getTimezoneInfo = () => {
+    return new Date().toLocaleTimeString(undefined, { timeZoneName: 'short' }).split(' ')[2];
+  };
+
   const isVideo = (url: string) => {
     return url.match(/\.(mp4|webm|ogg)$/i);
   };
@@ -174,7 +215,7 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
               </div>
               <div className="bg-[#212121] p-4 rounded-lg">
                 <h2 className="text-gray-400 text-sm mb-2">Drag Anniversary</h2>
-                <p className="text-white">{new Date(performer.dragAnniversary).toLocaleDateString()}</p>
+                <p className="text-white">{getLocalDateSafe(performer.dragAnniversary).toLocaleDateString()}</p>
               </div>
             </div>
 
@@ -237,7 +278,7 @@ const PerformerDetail = ({ performerId }: PerformerDetailProps) => {
                 </div>
                 <div>
                   <h3 className="text-gray-400 text-xs mb-1">Created At</h3>
-                  <p className="text-white">{new Date(performer.createdAt).toLocaleDateString()}</p>
+                  <p className="text-white">{getLocalDateSafe(performer.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>

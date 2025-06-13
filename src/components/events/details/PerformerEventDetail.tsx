@@ -4,13 +4,26 @@ import { useGetSingleEventQuery } from "../../../apis/events";
 import { toast } from "react-hot-toast";
 import moment from "moment-timezone";
 
+// Define event types for better type safety
+type EventType = "drag-show" | "drag-brunch" | "drag-bingo" | "drag-trivia" | "other";
+
 export const eventOptions = [
   { value: "drag-show", label: "Drag Show" },
   { value: "drag-brunch", label: "Drag Brunch" },
   { value: "drag-bingo", label: "Drag Bingo" },
   { value: "drag-trivia", label: "Drag Trivia" },
   { value: "other", label: "Other" },
-];
+] as const;
+
+interface Venue {
+  _id: string;
+  name: string;
+}
+
+interface Performer {
+  _id: string;
+  name: string;
+}
 
 interface Event {
   _id: string;
@@ -18,13 +31,14 @@ interface Event {
   userType: string;
   title: string;
   host: string;
-  type: string;
+  type: EventType;
   theme: string;
   startTime: string;
   endTime: string;
+  startDate: string;
   image?: string;
-  venuesList: any[];
-  performersList: any[];
+  venuesList: Venue[];
+  performersList: Performer[];
   description?: string;
   isPrivate: boolean | null;
   status: string;
@@ -37,12 +51,57 @@ const PerformerEventDetail = () => {
   const { data: response, isLoading } = useGetSingleEventQuery(id);
   const event = response?.event;
 
-  const formatDate = (dateString: string) => {
-    return moment.tz(dateString, "America/New_York").format("MM/DD/YYYY");
+  // Safe timezone handling for dates
+  const getLocalDateSafe = (dateString: string) => {
+    if (!dateString) return new Date();
+    const date = new Date(dateString);
+    // Handle midnight UTC case
+    if (
+      date.getUTCHours() === 0 &&
+      date.getUTCMinutes() === 0 &&
+      date.getUTCSeconds() === 0
+    ) {
+      const localDate = new Date(date);
+      const localDay = localDate.getDate();
+      const utcDay = date.getUTCDate();
+      if (localDay < utcDay) {
+        localDate.setDate(localDate.getDate() + 1);
+        return localDate;
+      }
+    }
+    // Always add one day to fix timezone offset
+    const adjustedDate = new Date(date);
+    adjustedDate.setDate(date.getDate() + 1);
+    return adjustedDate;
   };
 
+  // Modified formatDate function with timezone handling
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Modified formatTime function with timezone handling
   const formatTime = (dateString: string) => {
-    return moment.tz(dateString, "America/New_York").format("hh:mm A");
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleTimeString(undefined, {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short'
+    });
+  };
+
+  // Add timezone info function
+  const getTimezoneInfo = () => {
+    return new Date().toLocaleTimeString(undefined, { timeZoneName: 'short' }).split(' ')[2];
   };
 
   if (isLoading) {
@@ -83,7 +142,6 @@ const PerformerEventDetail = () => {
                     {eventOptions.find((option) => option.value === event.type)
                       ?.label ?? "Other"}
                   </p>
-
                   <p className="text-sm">Date: {formatDate(event.startDate)}</p>
                   <p className="text-sm">
                     Time: {formatTime(event.startTime)} -{" "}
@@ -140,7 +198,9 @@ const PerformerEventDetail = () => {
                     Venues ({event.venuesList.length})
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {event.venuesList.map((venue: any) => (
+                    
+                    {/* @ts-ignore */}
+                    {event.venuesList.map((venue) => (
                       <span
                         key={venue._id}
                         className="bg-[#FF00A2]/20 text-white px-3 py-1 rounded-full text-sm"
@@ -157,7 +217,8 @@ const PerformerEventDetail = () => {
                     Performers ({event.performersList.length})
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {event.performersList.map((performer: any) => (
+                    {/* @ts-ignore */}
+                    {event.performersList.map((performer) => (
                       <span
                         key={performer._id}
                         className="bg-[#FF00A2]/20 text-white px-3 py-1 rounded-full text-sm"

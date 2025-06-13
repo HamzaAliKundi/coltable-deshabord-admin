@@ -296,7 +296,7 @@ const Performer = ({
 
               <div className="bg-[] text-black rounded-b-[8px] px-3 sm:px-4 pb-3 sm:pb-4 mt-[-8px] flex flex-col justify-between h-[120px] sm:h-[150px]">
                 <h3 className="font-['Space_Grotesk'] text-white font-bold text-base sm:text-lg md:text-lg mt-6 sm:mt-8">
-                  {user.fullDragName}
+                  {user.fullDragName.length > 20 ? `${user.fullDragName.substring(0, 20)}...` : user.fullDragName}
                 </h3>
 
                 <div className="space-y-1 sm:space-y-2">

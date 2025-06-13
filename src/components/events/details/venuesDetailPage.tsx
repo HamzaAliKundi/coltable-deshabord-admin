@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useGetSingleEventQuery } from "../../../apis/events";
 
+// Define event types for better type safety
+type EventType = "drag-show" | "drag-brunch" | "drag-bingo" | "drag-trivia" | "other";
+
 export const outdoorCoveringOptions = [
   { label: "Indoor Stage", value: "indoor_stage" },
   { label: "Outdoor Stage", value: "outdoor_stage" },
@@ -14,39 +17,95 @@ export const outdoorCoveringOptions = [
   },
   { label: "Outdoor Patio - Hardwood", value: "outdoor_patio_hardwood" },
   { label: "Outdoor - Grass", value: "outdoor_grass" },
-];
+] as const;
+
+interface Performer {
+  _id: string;
+  fullDragName: string;
+}
+
+interface Event {
+  _id: string;
+  title: string;
+  host: string;
+  type: EventType;
+  startDate: string;
+  startTime: string;
+  endTime: string;
+  eventCallTime: string;
+  image?: string;
+  audienceType?: string;
+  hasCoverings?: string;
+  hasPrivateDressingArea?: string;
+  isEquipmentProvidedByPerformer?: string;
+  isEquipmentProvidedByVenue?: string;
+  hosts?: number;
+  performers?: number;
+  assignedPerformers?: number;
+  description?: string;
+  specialRequirements?: string;
+  musicFormat?: string;
+  performersList?: Performer[];
+}
 
 const EventRequestDetail = () => {
   const { id } = useParams();
-
   const { data: getEventsByVenuesById, isLoading } = useGetSingleEventQuery(id);
 
+  // Safe timezone handling for dates
+  const getLocalDateSafe = (dateString: string) => {
+    if (!dateString) return new Date();
+    const date = new Date(dateString);
+    // Handle midnight UTC case
+    if (
+      date.getUTCHours() === 0 &&
+      date.getUTCMinutes() === 0 &&
+      date.getUTCSeconds() === 0
+    ) {
+      const localDate = new Date(date);
+      const localDay = localDate.getDate();
+      const utcDay = date.getUTCDate();
+      if (localDay < utcDay) {
+        localDate.setDate(localDate.getDate() + 1);
+        return localDate;
+      }
+    }
+    // Always add one day to fix timezone offset
+    const adjustedDate = new Date(date);
+    adjustedDate.setDate(date.getDate() + 1);
+    return adjustedDate;
+  };
+
+  // Modified formatDate function with timezone handling
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    };
-    return new Date(dateString).toLocaleDateString("en-US", options);
+    });
   };
 
+  // Modified extractTime function with proper typing
   const extractTime = (dateString: string) => {
-    const date = new Date(dateString);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
     const ampm = hours >= 12 ? "PM" : "AM";
 
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? "0" + minutes : minutes;
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes.toString().padStart(2, '0');
 
-    return `${hours}:${minutes} ${ampm}`;
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
   };
 
-  const formatEventType = (type: any) => {
-    const types = {
+  // Fixed formatEventType with proper typing
+  const formatEventType = (type: EventType) => {
+    const types: Record<EventType, string> = {
       "drag-show": "Drag Show",
       "drag-brunch": "Drag Brunch",
       "drag-bingo": "Drag Bingo",
@@ -56,8 +115,12 @@ const EventRequestDetail = () => {
     return types[type] || "Other";
   };
 
-  const selectedCovering = getEventsByVenuesById?.event?.hasCoverings;
+  // Add timezone info function
+  const getTimezoneInfo = () => {
+    return new Date().toLocaleTimeString(undefined, { timeZoneName: 'short' }).split(' ')[2];
+  };
 
+  const selectedCovering = getEventsByVenuesById?.event?.hasCoverings;
   const selectedLabel = outdoorCoveringOptions.find(
     (option) => option.value === selectedCovering
   )?.label;
@@ -105,19 +168,12 @@ const EventRequestDetail = () => {
             </li>
             <li>
               <span className="font-medium">Type:</span>{" "}
-              {formatEventType(getEventsByVenuesById?.event?.type)}
+              {formatEventType(getEventsByVenuesById?.event?.type as EventType)}
             </li>
-         
-
             <li>
               <span className="font-medium">Audience:</span>{" "}
               {getEventsByVenuesById?.event?.audienceType}
             </li>
-
-            {/* <li>
-              <span className="font-medium">Location:</span>{" "}
-              {getEventsByVenuesById?.event?.address}
-            </li> */}
           </ul>
         </div>
 
@@ -128,24 +184,27 @@ const EventRequestDetail = () => {
           <ul className="text-white/90 space-y-2">
             <li>
               <span className="font-medium">Start Date:</span>{" "}
-              {formatDate(getEventsByVenuesById?.event.startDate)?.slice(0, 12)}
+              {getEventsByVenuesById?.event?.startDate ? 
+                formatDate(getEventsByVenuesById.event.startDate) : "N/A"}
             </li>
             <li>
               <span className="font-medium">Starts:</span>{" "}
-              {extractTime(getEventsByVenuesById?.event.startTime)}
+              {getEventsByVenuesById?.event?.startTime ? 
+                extractTime(getEventsByVenuesById.event.startTime) : "N/A"}
             </li>
             <li>
               <span className="font-medium">Ends:</span>{" "}
-              {extractTime(getEventsByVenuesById?.event.endTime)}
+              {getEventsByVenuesById?.event?.endTime ? 
+                extractTime(getEventsByVenuesById.event.endTime) : "N/A"}
             </li>
             <li>
               <span className="font-medium">Call Time:</span>{" "}
-              {extractTime(getEventsByVenuesById?.event.eventCallTime)}
+              {getEventsByVenuesById?.event?.eventCallTime ? 
+                extractTime(getEventsByVenuesById.event.eventCallTime) : "N/A"}
             </li>
-
             <li>
               <span className="font-medium">Music Deadline:</span>{" "}
-              {getEventsByVenuesById?.event?.musicFormat}
+              {getEventsByVenuesById?.event?.musicFormat || "N/A"}
             </li>
           </ul>
         </div>

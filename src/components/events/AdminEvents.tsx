@@ -18,7 +18,7 @@ interface Event {
   audienceType?: string;
   eventCategory?: string;
   specialRequirements?: string;
-  startDate?: string;
+  startDate: string;
 }
 
 const AdminEvents = () => {
@@ -38,8 +38,29 @@ const AdminEvents = () => {
     }
   );
 
-  const formatEventType = (type: any) => {
-    const types = {
+  const getLocalDateSafe = (dateString: string) => {
+    if (!dateString) return new Date();
+    const date = new Date(dateString);
+    if (
+      date.getUTCHours() === 0 &&
+      date.getUTCMinutes() === 0 &&
+      date.getUTCSeconds() === 0
+    ) {
+      const localDate = new Date(date);
+      const localDay = localDate.getDate();
+      const utcDay = date.getUTCDate();
+      if (localDay < utcDay) {
+        localDate.setDate(localDate.getDate() + 1);
+        return localDate;
+      }
+    }
+    const adjustedDate = new Date(date);
+    adjustedDate.setDate(date.getDate() + 1);
+    return adjustedDate;
+  };
+
+  const formatEventType = (type: string) => {
+    const types: Record<string, string> = {
       "drag-show": "Drag Show",
       "drag-brunch": "Drag Brunch",
       "drag-bingo": "Drag Bingo",
@@ -56,13 +77,29 @@ const AdminEvents = () => {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    if (!dateString) return "N/A";
+    const date = getLocalDateSafe(dateString);
+    return date.toLocaleTimeString(undefined, {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZoneName: 'short'
+    });
+  };
+
+  const getTimezoneInfo = () => {
+    return new Date().toLocaleTimeString(undefined, { timeZoneName: 'short' }).split(' ')[2];
   };
 
   if (isFetching || isLoading) {
@@ -98,8 +135,8 @@ const AdminEvents = () => {
                 <p>User Type: {event.userType}</p>
                 {event.audienceType && <p>Audience: {event.audienceType}</p>}
                 {event.eventCategory && <p>Category: {event.eventCategory}</p>}
-                <p>Date: {formatDate(event.startDate)}</p>
-                <p>Time: {formatTime(event.startTime)}</p>
+                <p>Date: {event.startDate ? formatDate(event.startDate) : "N/A"}</p>
+                <p>Time: {event.startTime ? formatTime(event.startTime) : "N/A"}</p>
                 <p className={getStatusColor(event.status)}>
                   Status: {event.status}
                 </p>
