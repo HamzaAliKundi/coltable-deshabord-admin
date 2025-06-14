@@ -280,14 +280,22 @@ const EventRequestDetail = () => {
           <h3 className="text-white border-b-[3px] border-[#FF00A2] mb-3 pb-1 text-lg">
             Description & Special Request
           </h3>
-          <p className="text-white/90">
-            <span className="font-medium">Description:</span>{" "}
-            {getEventsByVenuesById?.event?.description || "N/A"}
-          </p>
-          <p className="text-white/90">
-            <span className="font-medium">Special Request For Performer:</span>{" "}
-            {getEventsByVenuesById?.event?.specialRequirements || "N/A"}
-          </p>
+          <div className="text-white/90">
+            <p className="font-medium">Description:</p>
+            <div 
+              className="whitespace-pre-wrap"
+              dangerouslySetInnerHTML={{ 
+                __html: getEventsByVenuesById?.event?.description?.replace(/\n/g, '<br />') || "N/A" 
+              }}
+            />
+            <p className="font-medium mt-4">Special Request For Performer:</p>
+            <div 
+              className="whitespace-pre-wrap"
+              dangerouslySetInnerHTML={{ 
+                __html: getEventsByVenuesById?.event?.specialRequirements?.replace(/\n/g, '<br />') || "N/A" 
+              }}
+            />
+          </div>
         </div>
       )}
 
