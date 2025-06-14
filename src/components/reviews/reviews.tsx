@@ -9,6 +9,8 @@ interface ReviewCardProps {
   rating: number;
   text: string;
   status: string;
+  profile: string;
+  profileType: string;
   isFirstInRow?: boolean;
   onApprove: (id: string) => Promise<void>;
   onReject: (id: string) => Promise<void>;
@@ -25,6 +27,8 @@ interface Review {
   isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
+  profile: string;
+  profileType: string;
 }
 
 interface ReviewsResponse {
@@ -45,7 +49,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   name, 
   rating, 
   text, 
-  status, 
+  status,
+  profile,
+  profileType,
   isFirstInRow,
   onApprove,
   onReject,
@@ -88,7 +94,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           <div className="flex gap-4 items-center">
             <div>
               <h3 className="font-['Space_Grotesk'] font-normal text-[20px] leading-[100%] tracking-[0%] align-middle uppercase text-white">{name}</h3>
-              <div className="flex gap-0.5">
+              <p className="font-['Space_Grotesk'] text-sm text-white/60 mt-1">Reviewing: {profile}</p>
+              <p className="font-['Space_Grotesk'] text-xs text-white/40">{profileType}</p>
+              <div className="flex gap-0.5 mt-1">
                 {[...Array(rating)].map((_, i) => (
                   <span key={i} className="text-yellow-400 w-[10.8px] h-[10.8px] left-[10.8px]">★</span>
                 ))}
@@ -218,6 +226,8 @@ const Reviews = () => {
             rating={review.rating || 0}
             text={review.description || "No review text provided"}
             status={review.status}
+            profile={review.profile}
+            profileType={review.profileType}
             isFirstInRow={index % 2 === 0} 
             onApprove={handleApprove}
             onReject={handleReject}
