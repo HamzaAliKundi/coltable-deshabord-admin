@@ -58,11 +58,15 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   isUpdating
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isProfileExpanded, setIsProfileExpanded] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const maxLength = 100;
+  const maxProfileLength = 25;
   const shouldTruncate = text.length > maxLength;
+  const shouldTruncateProfile = profile.length > maxProfileLength;
   const displayText = shouldTruncate && !isExpanded ? `${text.substring(0, maxLength)}...` : text;
+  const displayProfile = shouldTruncateProfile && !isProfileExpanded ? `${profile.substring(0, maxProfileLength)}...` : profile;
   
   const isApproved = status === 'approved';
   const isRejected = status === 'rejected';
@@ -94,8 +98,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           <div className="flex gap-4 items-center">
             <div>
               <h3 className="font-['Space_Grotesk'] font-normal text-[20px] leading-[100%] tracking-[0%] align-middle uppercase text-white">{name}</h3>
-              <p className="font-['Space_Grotesk'] text-sm text-white/60 mt-1">Reviewing: {profile}</p>
-              <p className="font-['Space_Grotesk'] text-xs text-white/40">{profileType}</p>
               <div className="flex gap-0.5 mt-1">
                 {[...Array(rating)].map((_, i) => (
                   <span key={i} className="text-yellow-400 w-[10.8px] h-[10.8px] left-[10.8px]">★</span>
@@ -168,6 +170,22 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
             </button>
           )}
         </p>
+        <div className="mt-4 flex justify-end">
+          <div className="text-right">
+            <p className="font-['Space_Grotesk'] text-sm text-white/60">
+              Reviewing: {displayProfile}
+              {shouldTruncateProfile && (
+                <button 
+                  onClick={() => setIsProfileExpanded(!isProfileExpanded)} 
+                  className="text-white underline ml-1 hover:text-[#FF00A2] transition-colors"
+                >
+                  {isProfileExpanded ? "Show Less" : "Show More"}
+                </button>
+              )}
+            </p>
+            <p className="font-['Space_Grotesk'] text-xs text-white/40">{profileType}</p>
+          </div>
+        </div>
       </div>
     </div>
   )
