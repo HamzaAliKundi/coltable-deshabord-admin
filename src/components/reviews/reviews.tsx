@@ -62,6 +62,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const maxLength = 100;
+  profile = profile || "";
   const maxProfileLength = 25;
   const shouldTruncate = text.length > maxLength;
   const shouldTruncateProfile = profile.length > maxProfileLength;
