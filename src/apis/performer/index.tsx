@@ -30,6 +30,13 @@ export const performerApi = createApi({
         body: { status },
       }),
     }),
+    updatePerformerFeatured: builder.mutation({
+      query: ({ id, isFeatured }) => ({
+        url: `/api/admin/performer/update-performer/${id}`,
+        method: "PATCH",
+        body: { isFeatured },
+      }),
+    }),
     deletePerformer: builder.mutation({
       query: (id) => ({
         url: `/api/admin/performer/delete-performer/${id}`,
@@ -47,6 +54,7 @@ export const {
   useGetAllPerformersQuery,
   useGetSinglePerformerQuery,
   useUpdatePerformerStatusMutation,
+  useUpdatePerformerFeaturedMutation,
   useDeletePerformerMutation,
   useGetPerformersQuery,
 } = performerApi;

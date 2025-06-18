@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Pagination from '../../common/Pagination';
-import { useUpdatePerformerStatusMutation, useDeletePerformerMutation } from '../../apis/performer';
+import { useUpdatePerformerStatusMutation, useDeletePerformerMutation, useUpdatePerformerFeaturedMutation } from '../../apis/performer';
 import toast from 'react-hot-toast';
 
 interface PerformerProps {
@@ -37,9 +37,11 @@ const Performer = ({
   const rejectedPerformers = perFormerData?.filter((user: any) => user.status === 'rejected') || [];
   const [updateStatus] = useUpdatePerformerStatusMutation();
   const [deletePerformer] = useDeletePerformerMutation();
+  const [updateFeatured] = useUpdatePerformerFeaturedMutation();
   const [loadingApprove, setLoadingApprove] = useState('');
   const [loadingReject, setLoadingReject] = useState('');
   const [loadingDelete, setLoadingDelete] = useState('');
+  const [loadingFeatured, setLoadingFeatured] = useState('');
   const [selectedCity, setSelectedCity] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -132,6 +134,22 @@ const Performer = ({
       toast.error('Failed to delete performer');
     } finally {
       setLoadingDelete('');
+    }
+  };
+
+  const handleToggleFeatured = async (id: string, currentFeaturedStatus: boolean) => {
+    if (loadingFeatured) return;
+    try {
+      setLoadingFeatured(id);
+      const res = await updateFeatured({ id, isFeatured: !currentFeaturedStatus }).unwrap();
+      if (res.success === true) {
+        toast.success(`Performer ${!currentFeaturedStatus ? 'featured' : 'unfeatured'} successfully`);
+        await refetch();
+      }
+    } catch (error) {
+      toast.error('Failed to update featured status');
+    } finally {
+      setLoadingFeatured('');
     }
   };
 
@@ -358,6 +376,22 @@ const Performer = ({
                           </button>
                         )}
                       </div>
+                      <button 
+                        className={`w-full h-5 sm:h-7 rounded-full font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase ${
+                          user.isFeatured 
+                            ? 'bg-[#FF00A2] text-white' 
+                            : 'border border-gray-600 text-white hover:bg-[#FF00A2] hover:text-white'
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFeatured(user._id, user.isFeatured || false);
+                        }}
+                        disabled={loadingFeatured === user._id}
+                      >
+                        {loadingFeatured === user._id ? (
+                          <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent mx-auto"></div>
+                        ) : user.isFeatured ? 'Featured' : 'Feature'}
+                      </button>
                     </>
                   ) : (
                     <>
@@ -386,6 +420,22 @@ const Performer = ({
                         {loadingDelete === user._id ? (
                           <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent mx-auto"></div>
                         ) : 'Delete Profile'}
+                      </button>
+                      <button 
+                        className={`w-full h-5 sm:h-7 rounded-full font-['Space_Grotesk'] text-[6px] sm:text-[10px] uppercase ${
+                          user.isFeatured 
+                            ? 'bg-[#FF00A2] text-white' 
+                            : 'border border-gray-600 text-white hover:bg-[#FF00A2] hover:text-white'
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleFeatured(user._id, user.isFeatured || false);
+                        }}
+                        disabled={loadingFeatured === user._id}
+                      >
+                        {loadingFeatured === user._id ? (
+                          <div className="animate-spin h-4 w-4 border-2 border-white rounded-full border-t-transparent mx-auto"></div>
+                        ) : user.isFeatured ? 'Featured' : 'Feature'}
                       </button>
                     </>
                   )}
