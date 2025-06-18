@@ -34,7 +34,7 @@ interface Event {
   endTime: string;
   eventCallTime: string;
   image?: string;
-  audienceType?: string;
+  audienceType?: string[];
   hasCoverings?: string;
   hasPrivateDressingArea?: string;
   isEquipmentProvidedByPerformer?: string;
@@ -172,7 +172,7 @@ const EventRequestDetail = () => {
             </li>
             <li>
               <span className="font-medium">Audience:</span>{" "}
-              {getEventsByVenuesById?.event?.audienceType}
+              {getEventsByVenuesById?.event?.audienceType?.join(", ")}
             </li>
           </ul>
         </div>
