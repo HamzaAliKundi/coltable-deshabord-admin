@@ -30,7 +30,7 @@ interface Event {
   user: string;
   userType: string;
   title: string;
-  host: string;
+  host: string[];
   type: EventType;
   theme: string;
   startTime: string;
@@ -136,7 +136,7 @@ const PerformerEventDetail = () => {
               </h1>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-400">
                 <div>
-                  <p className="text-sm">Host: {event.host}</p>
+                  <p className="text-sm">Host: {event.host.join(", ")}</p>
                   <p className="text-sm">
                     Type:{" "}
                     {eventOptions.find((option) => option.value === event.type)

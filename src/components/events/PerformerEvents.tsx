@@ -192,7 +192,7 @@ const PerformerEvents = () => {
                 {event.title}
               </h2>
               <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 text-gray-400 text-xs sm:text-sm">
-                <p>Host: {event.host}</p>
+                {/* <p>Host: {event.host}</p> */}
                 <p>Type: {formatEventType(event.type)}</p>
                 <p>Date: {event.startDate ? formatDate(event.startDate) : "N/A"}</p>
                 <p>Time: {event.startTime ? formatTime(event.startTime) : "N/A"}</p>

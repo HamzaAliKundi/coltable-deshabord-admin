@@ -27,7 +27,7 @@ interface Performer {
 interface Event {
   _id: string;
   title: string;
-  host: string;
+  host: string[];
   type: EventType;
   startDate: string;
   startTime: string;
@@ -164,7 +164,7 @@ const EventRequestDetail = () => {
           <ul className="text-white/90 space-y-2">
             <li>
               <span className="font-medium">Host:</span>{" "}
-              {getEventsByVenuesById?.event?.host}
+              {getEventsByVenuesById?.event?.host.join(", ")}
             </li>
             <li>
               <span className="font-medium">Type:</span>{" "}
