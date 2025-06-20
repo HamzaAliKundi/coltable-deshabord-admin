@@ -223,7 +223,7 @@ const PerformerEventDetail = () => {
                         key={performer._id}
                         className="bg-[#FF00A2]/20 text-white px-3 py-1 rounded-full text-sm"
                       >
-                        {performer.name}
+                        {performer.fullDragName}
                       </span>
                     ))}
                   </div>
