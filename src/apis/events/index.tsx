@@ -25,6 +25,7 @@ export const eventsApi = createApi({
     }),
     getSingleEvent: builder.query({
       query: (eventId) => `/api/admin/event/get-single-event/${eventId}`,
+      keepUnusedDataFor: 0, 
     }),
     updateEventStatus: builder.mutation({
       query: ({ eventId, status }) => ({
