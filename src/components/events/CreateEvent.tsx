@@ -47,6 +47,8 @@ const CreateEvent = () => {
     watch,
     formState: { errors },
   } = useForm<EventFormData>();
+
+  // @ts-ignore
   const { data: performers } = useGetPerformersQuery();
   const [createEvent, { isLoading: isCreating }] = useAddEventMutation();
   const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
@@ -188,6 +190,9 @@ const CreateEvent = () => {
         description: event.description,
         isPrivate: event.isPrivate ? "true" : "false",
         address: event.address,
+        performers: event.performersList
+          ? processHostsOrPerformers(event.performersList)
+          : [],
       });
 
       if (eventResponse?.event?.image) {
@@ -227,9 +232,9 @@ const CreateEvent = () => {
       startTime.setHours(startHours, startMinutes, 0, 0);
       endTime.setHours(endHours, endMinutes, 0, 0);
 
-      // Always send names (labels) instead of IDs
+      // Send names (labels) for hosts, but IDs (values) for performers
       const processedHosts = data.host ? data.host.map((h) => h.label) : [];
-      const processedPerformers = data.performers ? data.performers.map((p) => p.label) : [];
+      const processedPerformers = data.performers ? data.performers.map((p) => p.value) : [];
 
       const eventData = {
         ...data,
@@ -238,7 +243,7 @@ const CreateEvent = () => {
         endTime: endTime.toISOString(),
         image: logoUrl,
         host: processedHosts,
-        performerList: processedPerformers,
+        performersList: processedPerformers,
       };
 
       if (eventData.performers) delete eventData.performers;
