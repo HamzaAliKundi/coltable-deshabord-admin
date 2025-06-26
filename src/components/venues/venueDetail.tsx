@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGetVenueByIdQuery } from '../../apis/venues';
+import { useGetPerformersQuery } from '../../apis/performer';
 
 interface VenueDetailProps {
   venueId: string;
@@ -11,6 +12,17 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [mainVideoIndex, setMainVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'images' | 'videos'>('images');
+
+  // @ts-ignore
+  const { data: performers } = useGetPerformersQuery();
+  console.log(performers);
+  
+  // Get top drag performers by matching IDs
+  const topDragPerformers = venue?.topDragPerformers 
+    ? performers?.filter((performer: any) => 
+        venue.topDragPerformers.includes(performer._id)
+      ).map((performer: any) => performer.fullDragName) || []
+    : [];
 
   const isVideo = (url: string) => {
     return url.match(/\.(mp4|webm|ogg)$/i);
@@ -170,7 +182,20 @@ const VenueDetail = ({ venueId }: VenueDetailProps) => {
               </div>
               <div className="bg-[#212121] p-4 rounded-lg">
                 <h2 className="text-gray-400 text-sm mb-2">Top Drag Performers</h2>
-                <p className="text-white">{venue.topDragPerformers}</p>
+                {topDragPerformers.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {topDragPerformers.map((performerName: string, index: number) => (
+                      <span 
+                        key={index} 
+                        className="bg-[#FF00A2]/20 text-white px-3 py-1 rounded-full text-sm border border-[#FF00A2]/30"
+                      >
+                        {performerName}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm">No top performers listed</p>
+                )}
               </div>
             </div>
 
