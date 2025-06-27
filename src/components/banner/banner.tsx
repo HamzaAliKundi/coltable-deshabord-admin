@@ -548,7 +548,7 @@ const Banner = () => {
         <img
           src={url || "/placeholder.svg"}
           alt={`Preview ${index + 1}`}
-          className="w-full h-full object-cover rounded-lg"
+          className="w-full h-full object-cover object-top rounded-lg"
         />
         {!isEditing &&
           !uploadingMediaIndex[
@@ -893,7 +893,7 @@ const Banner = () => {
                     <img
                       src={currentImage || "/placeholder.svg"}
                       alt="Current banner"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-top"
                     />
                   ) : (
                     <div className="w-24 h-24 bg-gray-600 rounded-lg flex items-center justify-center">
