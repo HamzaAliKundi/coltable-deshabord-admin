@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PerformerEvents from "./PerformerEvents";
 import VenueEvents from "./VenueEvents";
 import AdminEvents from "./AdminEvents";
@@ -6,21 +6,31 @@ import { Link } from "react-router-dom";
 
 const Events = () => {
   const [activeTab, setActiveTab] = useState("performer");
+  const [pastFilter, setPastFilter] = useState(false);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
 
+  const handlePastFilterChange = (value: string) => {
+    setPastFilter(value === "past");
+  };
+
+  // Reset to first page when filter changes
+  useEffect(() => {
+    // This will trigger a refetch in child components when pastFilter changes
+  }, [pastFilter]);
+
   const renderContent = () => {
     switch (activeTab) {
       case "performer":
-        return <PerformerEvents />;
+        return <PerformerEvents key={`performer-${pastFilter}`} pastFilter={pastFilter} />;
       case "venue":
-        return <VenueEvents />;
+        return <VenueEvents key={`venue-${pastFilter}`} pastFilter={pastFilter} />;
       case "admin":
-        return <AdminEvents />;
+        return <AdminEvents key={`admin-${pastFilter}`} pastFilter={pastFilter} />;
       default:
-        return <PerformerEvents />;
+        return <PerformerEvents key={`performer-${pastFilter}`} pastFilter={pastFilter} />;
     }
   };
 
@@ -63,10 +73,17 @@ const Events = () => {
           </button>
         </div>
         <div className="relative w-full md:w-auto">
-          <select className="w-full md:w-[121px] h-[30px] sm:h-[35px] rounded-[8px] border border-[#FF00A2] bg-transparent text-white px-2 sm:px-3 pr-6 sm:pr-8 appearance-none outline-none text-xs sm:text-sm">
-            <option value="">Filter by</option>
-            <option value="name">Name</option>
-            <option value="status">Status</option>
+          <select 
+            className="w-full md:w-[121px] h-[30px] sm:h-[35px] rounded-[8px] border border-[#FF00A2] bg-[#212121] text-white px-2 sm:px-3 pr-6 sm:pr-8 appearance-none outline-none text-xs sm:text-sm cursor-pointer hover:bg-[#2a2a2a] transition-colors"
+            onChange={(e) => handlePastFilterChange(e.target.value)}
+            value={pastFilter ? "past" : "all"}
+            style={{
+              color: 'white',
+              backgroundColor: '#212121'
+            }}
+          >
+            <option value="all" className="bg-[#212121] text-white hover:bg-[#2a2a2a]">All Events</option>
+            <option value="past" className="bg-[#212121] text-white hover:bg-[#2a2a2a]">Past Events</option>
           </select>
           <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <svg

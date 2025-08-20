@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "../../common/Pagination";
 import {
   useGetAdminEventsQuery,
@@ -24,12 +24,21 @@ interface Event {
   startDate: string; // Make this required
 }
 
-const PerformerEvents = () => {
+interface PerformerEventsProps {
+  pastFilter: boolean;
+}
+
+const PerformerEvents = ({ pastFilter }: PerformerEventsProps) => {
   const [updatingEventId, setUpdatingEventId] = useState<string | null>(null);
   const [updatingAction, setUpdatingAction] = useState<
     "approve" | "reject" | null
   >(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pastFilter]);
 
   const {
     data: events,
@@ -41,6 +50,7 @@ const PerformerEvents = () => {
       page: currentPage,
       limit: 4,
       userType: "performer",
+      past: pastFilter,
     },
     {
       refetchOnMountOrArgChange: true,

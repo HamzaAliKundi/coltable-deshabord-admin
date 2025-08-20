@@ -18,9 +18,9 @@ export const eventsApi = createApi({
       query: () => "/venues/event",
     }),
     getAdminEvents: builder.query({
-      query: ({ page = 1, limit = 10, userType }) => ({
+      query: ({ page = 1, limit = 10, userType, past }) => ({
         url: "/api/admin/event/get-all-events",
-        params: { page, limit, userType },
+        params: { page, limit, userType, past },
       }),
     }),
     getSingleEvent: builder.query({

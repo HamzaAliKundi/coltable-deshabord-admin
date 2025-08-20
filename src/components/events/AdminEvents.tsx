@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "../../common/Pagination";
 import { useGetAdminEventsQuery } from "../../apis/events";
 import { Link } from "react-router-dom";
@@ -21,8 +21,18 @@ interface Event {
   startDate: string;
 }
 
-const AdminEvents = () => {
+interface AdminEventsProps {
+  pastFilter: boolean;
+}
+
+const AdminEvents = ({ pastFilter }: AdminEventsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pastFilter]);
+
   const {
     data: events,
     isLoading,
@@ -32,6 +42,7 @@ const AdminEvents = () => {
       page: currentPage,
       limit: 4,
       userType: "admin",
+      past: pastFilter,
     },
     {
       refetchOnMountOrArgChange: true,
