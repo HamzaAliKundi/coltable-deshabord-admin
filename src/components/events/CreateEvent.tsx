@@ -12,6 +12,7 @@ import { eventOptions } from "../../utils/create-event/dropdownData";
 import { Calendar, Clock } from "lucide-react";
 import { useGetPerformersQuery } from "../../apis/performer";
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 
 
 interface EventFormData {
@@ -49,9 +50,44 @@ const CreateEvent = () => {
   } = useForm<EventFormData>();
 
   // @ts-ignore
-  const { data: performers } = useGetPerformersQuery();
+  const { data: performers } = useGetPerformersQuery({ limit: 1000 });
   const [createEvent, { isLoading: isCreating }] = useAddEventMutation();
   const [updateEvent, { isLoading: isUpdating }] = useUpdateEventMutation();
+
+  // Load performers for AsyncSelect with search
+  const loadPerformers = async (inputValue: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      const searchParam = inputValue ? `&search=${encodeURIComponent(inputValue)}` : '';
+      const url = `${baseUrl}/api/admin/performer/get-performers?limit=1000&page=1${searchParam}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+      });
+      
+      if (!response.ok) {
+        return [];
+      }
+      
+      const data = await response.json();
+      const performersList = Array.isArray(data) ? data : [];
+      
+      return performersList.map((performer: any) => ({
+        value: performer._id,
+        label:
+          performer.fullDragName ||
+          performer.name ||
+          performer.firstName ||
+          performer.email,
+      }));
+    } catch (error) {
+      console.error('Error loading performers:', error);
+      return [];
+    }
+  };
   const { data: eventResponse, isLoading: isFetching } = useGetSingleEventQuery(
     id || "",
     {
@@ -576,21 +612,15 @@ const CreateEvent = () => {
             name="performers"
             control={control}
             render={({ field }) => (
-              <Select
+              <AsyncSelect
                 {...field}
                 isMulti
                 isDisabled={false}
                 closeMenuOnSelect={false}
-                options={
-                  performers?.map((performer: any) => ({
-                    value: performer._id,
-                    label:
-                      performer.fullDragName ||
-                      performer.name ||
-                      performer.firstName ||
-                      performer.email,
-                  })) || []
-                }
+                loadOptions={loadPerformers}
+                defaultOptions
+                cacheOptions
+                isSearchable={true}
                 className="w-full"
                 styles={{
                   control: (base) => ({
@@ -652,7 +682,7 @@ const CreateEvent = () => {
                     color: "#fff",
                   }),
                 }}
-                placeholder="Select performers"
+                placeholder="Type to search performers..."
               />
             )}
           />
