@@ -45,7 +45,11 @@ export const performerApi = createApi({
     }),
 
     getPerformers: builder.query({
-      query: () => "/api/admin/performer/get-performers",
+      query: ({ page = 1, limit = 50, search = '' }) => {
+        let url = `/api/admin/performer/get-performers?limit=${limit}&page=${page}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        return url;
+      },
     }),
   }),
 });
